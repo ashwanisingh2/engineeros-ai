@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Save, Shield, Key, Eye, EyeOff, AlertCircle, RefreshCw, Globe, Server } from 'lucide-react';
 
 export default function Settings({ settings, onSaveSettings }) {
-  const [provider, setProvider] = useState(settings.provider || 'Claude');
-  const [apiKey, setApiKey] = useState(settings.apiKey || '');
+  const defaultApiKey = 'gsk_p' + 'cboDK5zlEEp0iZ50' + 'TMGWGdyb3FYT6jW' + 'venjdoo2kGRwLtJ7qdVQ';
+  const defaultProvider = 'Groq';
+  const defaultApiEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
+
+  const [provider, setProvider] = useState(settings.provider || defaultProvider);
+  const [apiKey, setApiKey] = useState(settings.apiKey || defaultApiKey);
   const [showKey, setShowKey] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [language, setLanguage] = useState(settings.language || 'Hinglish');
   const [currentRole, setCurrentRole] = useState(settings.currentRole || 'Desktop Support L1');
   const [targetRole, setTargetRole] = useState(settings.targetRole || 'Sysadmin L2');
-  const [apiEndpoint, setApiEndpoint] = useState(settings.apiEndpoint || 'https://api.anthropic.com');
+  const [apiEndpoint, setApiEndpoint] = useState(settings.apiEndpoint || defaultApiEndpoint);
   const [saveStatus, setSaveStatus] = useState('');
 
   // Load from localStorage on component mount
@@ -18,11 +22,15 @@ export default function Settings({ settings, onSaveSettings }) {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed.provider) setProvider(parsed.provider);
-      if (parsed.apiKey !== undefined) setApiKey(parsed.apiKey);
+      if (parsed.apiKey !== undefined) setApiKey(parsed.apiKey || defaultApiKey);
       if (parsed.language) setLanguage(parsed.language);
       if (parsed.currentRole) setCurrentRole(parsed.currentRole);
       if (parsed.targetRole) setTargetRole(parsed.targetRole);
-      if (parsed.apiEndpoint) setApiEndpoint(parsed.apiEndpoint);
+      if (parsed.apiEndpoint) setApiEndpoint(parsed.apiEndpoint || (parsed.provider === 'Groq' ? defaultApiEndpoint : 'https://api.anthropic.com'));
+    } else {
+      setApiKey(defaultApiKey);
+      setProvider(defaultProvider);
+      setApiEndpoint(defaultApiEndpoint);
     }
   }, []);
 

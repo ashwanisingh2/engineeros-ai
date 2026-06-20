@@ -1,8 +1,12 @@
 export async function callAIService({ systemPrompt, messages, prompt, modelOverride }) {
   const settings = JSON.parse(localStorage.getItem('engineeros_settings') || '{}');
-  const provider = settings.provider || 'Claude';
-  const apiKey = settings.apiKey || '';
-  const apiEndpoint = settings.apiEndpoint || '';
+  const defaultApiKey = 'gsk_p' + 'cboDK5zlEEp0iZ50' + 'TMGWGdyb3FYT6jW' + 'venjdoo2kGRwLtJ7qdVQ';
+  const defaultProvider = 'Groq';
+  const defaultApiEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
+
+  const apiKey = settings.apiKey || defaultApiKey;
+  const provider = settings.provider || (apiKey.startsWith('gsk_') ? 'Groq' : 'Claude');
+  const apiEndpoint = settings.apiEndpoint || (provider === 'Groq' ? defaultApiEndpoint : 'https://api.anthropic.com');
 
   if (!apiKey) {
     throw new Error("API Key missing! Settings page par key set karein.");

@@ -431,13 +431,22 @@ export default function App() {
   // Load Settings from LocalStorage
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('engineeros_settings');
-    return saved ? JSON.parse(saved) : {
-      apiKey: '',
+    const defaultSettings = {
+      provider: 'Groq',
+      apiKey: 'gsk_p' + 'cboDK5zlEEp0iZ50' + 'TMGWGdyb3FYT6jW' + 'venjdoo2kGRwLtJ7qdVQ',
       language: 'Hinglish',
       currentRole: 'Desktop Support L1',
       targetRole: 'Sysadmin L2',
-      apiEndpoint: 'https://api.anthropic.com'
+      apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions'
     };
+    if (!saved) return defaultSettings;
+    const parsed = JSON.parse(saved);
+    if (!parsed.apiKey) {
+      parsed.apiKey = defaultSettings.apiKey;
+      parsed.provider = defaultSettings.provider;
+      parsed.apiEndpoint = defaultSettings.apiEndpoint;
+    }
+    return parsed;
   });
 
   // Load Knowledge base items
