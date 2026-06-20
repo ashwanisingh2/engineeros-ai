@@ -1,112 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Award, BookOpen, Clock, ChevronRight, Check, Loader } from 'lucide-react';
 import { callAIService } from '../utils/aiService';
-
-const COURSE_SYLLABUS = {
-  // Course ID 1: Computer Hardware & Troubleshooting (9 modules)
-  1: [
-    {
-      id: "01.01",
-      title: "01.01-cpu-architecture-basics",
-      name: "CPU Architecture Basics",
-      explainer: "Central Processing Unit (CPU) executes instruction cycles (Fetch-Decode-Execute). Modern CPUs use x86-64 or ARM architectures. Cache levels (L1, L2, L3) speed up access times by storing frequently used memory data close to core processing units.",
-      problem: "Detail the primary differences between L1 Cache and L3 Cache in processor architectures.",
-      solution: "L1 Cache is extremely fast, operates at core speed, has a tiny storage size (typically 32KB-64KB per core), and is built directly inside each CPU core boundary. L3 Cache is larger (typically 12MB-64MB), runs slightly slower, and is shared among all processor cores on the silicon die."
-    },
-    {
-      id: "01.02",
-      title: "01.02-ram-slots-and-troubleshooting",
-      name: "RAM Slots and Troubleshooting",
-      explainer: "RAM (Random Access Memory) acts as volatile primary storage. Troubleshoot modules by verifying seating contacts, using MemTest86 diagnostic scans, and understanding dual-channel slot configurations (slots 1 & 3 vs 2 & 4).",
-      problem: "List three common symptoms of a loose, unseated, or failing RAM memory module.",
-      solution: "1. The system failing to POST (Power-On Self-Test) accompanied by continuous system beeps.\n2. Random BSOD (Blue Screen of Death) memory dump logs.\n3. The system booting up but displaying a blank/black monitor with active cooling fans."
-    },
-    {
-      id: "01.03",
-      title: "01.03-motherboard-form-factors",
-      name: "Motherboard Form Factors",
-      explainer: "Standard motherboard form factors (ATX, Micro-ATX, and Mini-ITX) define mount layout specs, expansion port locations, and power connector constraints.",
-      problem: "Which motherboard form factor is best suited for small form-factor Home Theater PCs, and why?",
-      solution: "Mini-ITX, because it specifies an ultra-compact standard size of 17x17 cm, fitting easily inside low-profile client chassis while still providing standard PCIe and SATA headers."
-    }
-  ],
-  // Course ID 2: CCNA 200-301 (Networking) (11 modules)
-  2: [
-    {
-      id: "02.01",
-      title: "02.01-osi-model-layers",
-      name: "OSI Model Layers",
-      explainer: "The OSI model separates network communications into seven layers: Physical, Data Link, Network, Transport, Session, Presentation, Application. PDUs vary by layer (bits, frames, packets, segments, data).",
-      problem: "Determine the OSI layer responsible for packet routing path decisions and specify its PDU.",
-      solution: "OSI Layer 3 (Network Layer) handles logical IP routing. Its Protocol Data Unit (PDU) is the Packet."
-    },
-    {
-      id: "02.02",
-      title: "02.02-ipv4-subnetting-basics",
-      name: "IPv4 Subnetting Basics",
-      explainer: "Subnetting divides Classful IPs into smaller logical networks. Use Variable Length Subnet Masking (VLSM) to allocate network host boundaries correctly.",
-      problem: "Determine the subnet mask and total usable client host addresses for a /26 CIDR range.",
-      solution: "A /26 subnet corresponds to a mask of 255.255.255.192. It contains 64 total addresses, leaving 62 usable client host addresses (subtracting the network address and directed broadcast address)."
-    },
-    {
-      id: "02.03",
-      title: "02.03-vlans-and-routing",
-      name: "VLANs & Inter-VLAN Routing",
-      explainer: "Virtual LANs segment switch ports into separate logical broadcast domains. Connect multiple VLANs across single router trunks using subinterfaces (Router-on-a-Stick).",
-      problem: "What port configuration is required on switch-to-router links to carry traffic for multiple VLANs?",
-      solution: "The link must be configured in Trunk Mode, utilizing IEEE 802.1Q frame encapsulation to tag packet frames with their respective VLAN IDs."
-    }
-  ],
-  // Course ID 3: MCSA Windows Server 2022
-  3: [
-    {
-      id: "03.01",
-      title: "03.01-active-directory-forests",
-      name: "Active Directory Forests & Domains",
-      explainer: "Active Directory DS is structured by Forests, Trees, Domains, and OUs. The Forest acts as the ultimate security boundary. Domains segment logical admin regions.",
-      problem: "Explain if cross-domain authentication is possible between domains under the same Active Directory Forest.",
-      solution: "Yes. By default, two-way transitive Kerberos trust relationships are automatically generated between parent and child domains in the same Forest, allowing users to authenticate across domain zones."
-    },
-    {
-      id: "03.02",
-      title: "03.02-dns-zone-replication",
-      name: "DNS Zone Replication",
-      explainer: "AD-Integrated zones store DNS data partitions inside active directory databases (`ntds.dit`), causing DNS data to replicate securely alongside AD DS replication schedules.",
-      problem: "List the main security benefit of setting up Active Directory-Integrated DNS zones.",
-      solution: "AD-Integrated zones support Secure Dynamic Updates. This restricts DNS modification updates only to authenticated domain members, preventing rogue devices from hijacking domain records."
-    }
-  ],
-  // Course ID 4: RHCSA Linux
-  4: [
-    {
-      id: "04.01",
-      title: "04.01-linux-permissions-chmod",
-      name: "Linux Permissions & chmod",
-      explainer: "Linux permissions use Read (4), Write (2), and Execute (1) bits across User, Group, and Others (UGO). Configured using the `chmod` command.",
-      problem: "Convert permission flags 'rwxr-xr--' to octal numeric representation.",
-      solution: "754 (Owner rwx = 4+2+1 = 7; Group r-x = 4+1 = 5; Others r-- = 4)."
-    },
-    {
-      id: "04.02",
-      title: "04.02-logical-volume-manager",
-      name: "LVM Volume Provisioning",
-      explainer: "LVM abstracts raw storage blocks into flexible pools. Initialize Physical Volumes (PV), group them into Volume Groups (VG), and carve out Logical Volumes (LV).",
-      problem: "Write the sequence of command steps to configure a 5GB Logical Volume named 'datalv' on raw disk /dev/sdb.",
-      solution: "1. pvcreate /dev/sdb (Initialize PV)\n2. vgcreate datavg /dev/sdb (Create VG)\n3. lvcreate -n datalv -L 5G datavg (Carve 5GB LV)"
-    }
-  ],
-  // Course ID 6: PowerShell Scripting
-  6: [
-    {
-      id: "06.01",
-      title: "06.01-powershell-cmdlets",
-      name: "PowerShell Cmdlet Basics",
-      explainer: "PowerShell scripts use structured Verb-Noun cmdlets. Objects are piped (`|`) to downstream commands to filter and format outputs.",
-      problem: "Write a PowerShell pipeline command to retrieve active services, filter for stopped ones, and sort them by service name.",
-      solution: "Get-Service | Where-Object Status -eq 'Stopped' | Sort-Object Name"
-    }
-  ]
-};
+import { COURSES_SYLLABUS_DATA } from '../data/coursesSyllabusData';
 
 export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
@@ -141,30 +36,13 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
       return cachedSyllabi[course.id];
     }
     
-    // 2. Check if we have it in custom COURSE_SYLLABUS static list
-    const customList = COURSE_SYLLABUS[course.id];
+    // 2. Check if we have it in custom COURSES_SYLLABUS_DATA static list
+    const customList = COURSES_SYLLABUS_DATA[course.id];
     if (customList) {
-      if (customList.length < course.totalModules) {
-        const list = [...customList];
-        for (let i = customList.length + 1; i <= course.totalModules; i++) {
-          const subNum = i < 10 ? `0${i}` : `${i}`;
-          const coursePrefix = course.id < 10 ? `0${course.id}` : `${course.id}`;
-          const idx = `${coursePrefix}.${subNum}`;
-          list.push({
-            id: idx,
-            title: `${idx}-lesson-module-${i}`,
-            name: `Lesson Module ${i} for ${course.name}`,
-            explainer: `This lesson covers advanced theoretical concepts, system configurations, and troubleshooting guidelines for ${course.name}.`,
-            problem: `Detail the standard troubleshooting steps and configuration guidelines for this topic within ${course.name}.`,
-            solution: `Solution verification: Verify system services are running, configurations match staging, and diagnostic tests pass without error flags.`
-          });
-        }
-        return list;
-      }
       return customList;
     }
 
-    // 3. Return empty array to prompt AI Generation for other courses
+    // 3. Return empty array to prompt AI Generation if not found
     return [];
   };
 
