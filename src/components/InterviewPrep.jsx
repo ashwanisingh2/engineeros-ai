@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play, Check, RotateCcw, AlertTriangle, Eye, Sparkles, BookOpen, Loader } from 'lucide-react';
+import { callAIService } from '../utils/aiService';
 
 const PRELOADED_QUESTIONS = {
   "MCSA Windows Server": [
@@ -85,14 +86,12 @@ export default function InterviewPrep({ settings }) {
 
   const handleGenerateAI = async () => {
     if (!settings.apiKey) {
-      alert("Claude API Key missing! Settings page par key set karein.");
+      alert("API Key missing! Settings page par key set karein.");
       return;
     }
 
     setLoading(true);
     try {
-      const endpoint = `${settings.apiEndpoint.replace(/\/$/, '')}/v1/messages`;
-      
       const promptText = `Generate exactly 5 realistic, industry-relevant technical interview questions and answers for the IT Admin topic: "${selectedCourse}".
       The questions must be highly realistic to what actual system administrator, desktop support, and cloud engineer roles face in interviews in India.
       Difficulty levels must be mix of Easy, Medium, and Hard.
@@ -103,30 +102,13 @@ export default function InterviewPrep({ settings }) {
         {"q": "question text", "a": "detailed explanation answer", "difficulty": "Easy|Medium|Hard"}
       ]`;
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'x-api-key': settings.apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "claude-3-5-sonnet-20241022",
-          max_tokens: 3000,
-          system: "You are an interview bot that output raw JSON only.",
-          messages: [{ role: "user", content: promptText }]
-        })
+      const responseText = await callAIService({
+        systemPrompt: "You are an interview bot that output raw JSON only.",
+        prompt: promptText
       });
-
-      if (!response.ok) {
-        throw new Error(`API failed with status ${response.status}`);
-      }
-
-      const resJson = await response.json();
-      const contentText = resJson.content[0].text.trim();
       
-      // Clean JSON if Claude wrapped it in ```json
-      const cleaned = contentText.replace(/^```json/, '').replace(/```$/, '').trim();
+      // Clean JSON if Claude/Groq wrapped it in ```json
+      const cleaned = responseText.trim().replace(/^```json/, '').replace(/```$/, '').trim();
       const parsed = JSON.parse(cleaned);
       
       if (Array.isArray(parsed) && parsed.length > 0) {

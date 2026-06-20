@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Save, Shield, Key, Eye, EyeOff, AlertCircle, RefreshCw, Globe, Server } from 'lucide-react';
 
 export default function Settings({ settings, onSaveSettings }) {
+  const [provider, setProvider] = useState(settings.provider || 'Claude');
   const [apiKey, setApiKey] = useState(settings.apiKey || '');
   const [showKey, setShowKey] = useState(false);
   const [language, setLanguage] = useState(settings.language || 'Hinglish');
@@ -9,6 +10,19 @@ export default function Settings({ settings, onSaveSettings }) {
   const [targetRole, setTargetRole] = useState(settings.targetRole || 'Sysadmin L2');
   const [apiEndpoint, setApiEndpoint] = useState(settings.apiEndpoint || 'https://api.anthropic.com');
   const [saveStatus, setSaveStatus] = useState('');
+
+  const handleProviderChange = (newProvider) => {
+    setProvider(newProvider);
+    if (newProvider === 'Groq') {
+      if (apiEndpoint === 'https://api.anthropic.com' || apiEndpoint === '') {
+        setApiEndpoint('https://api.groq.com/openai/v1/chat/completions');
+      }
+    } else {
+      if (apiEndpoint === 'https://api.groq.com/openai/v1/chat/completions' || apiEndpoint === '') {
+        setApiEndpoint('https://api.anthropic.com');
+      }
+    }
+  };
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -18,6 +32,7 @@ export default function Settings({ settings, onSaveSettings }) {
       currentRole,
       targetRole,
       apiEndpoint,
+      provider,
     });
     setSaveStatus('Settings successfully saved!');
     setTimeout(() => setSaveStatus(''), 3000);
@@ -61,8 +76,22 @@ export default function Settings({ settings, onSaveSettings }) {
           </h2>
           <div className="space-y-4">
             <div>
+              <label className="block text-sm font-medium text-textPrimary mb-2">
+                API Provider
+              </label>
+              <select
+                value={provider}
+                onChange={(e) => handleProviderChange(e.target.value)}
+                className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 px-4 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent transition-colors"
+              >
+                <option value="Claude">Anthropic Claude</option>
+                <option value="Groq">Groq (Llama / Mixtral)</option>
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-textPrimary mb-2 flex items-center justify-between">
-                <span>Claude API Key (sk-ant-...)</span>
+                <span>{provider === 'Groq' ? 'Groq API Key (gsk_...)' : 'Claude API Key (sk-ant-...)'}</span>
                 <span className="text-xs text-textMuted font-mono">Stored locally in your browser</span>
               </label>
               <div className="relative">
@@ -70,7 +99,7 @@ export default function Settings({ settings, onSaveSettings }) {
                   type={showKey ? 'text' : 'password'}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Enter sk-ant-... API Key"
+                  placeholder={provider === 'Groq' ? 'Enter gsk_... API Key' : 'Enter sk-ant-... API Key'}
                   className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 pl-4 pr-12 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent transition-colors font-mono"
                 />
                 <button
@@ -82,7 +111,11 @@ export default function Settings({ settings, onSaveSettings }) {
                 </button>
               </div>
               <p className="text-xs text-textMuted mt-2">
-                This key is required to use AI Chat, Doc Generator, and Daily Challenge features. You can get one from the <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-primaryAccent hover:underline">Anthropic Console</a>.
+                {provider === 'Groq' ? (
+                  <span>This key is required to use AI Chat, Doc Generator, and Daily Challenge features. You can get one from the <a href="https://console.groq.com/" target="_blank" rel="noopener noreferrer" className="text-primaryAccent hover:underline">Groq Console</a>.</span>
+                ) : (
+                  <span>This key is required to use AI Chat, Doc Generator, and Daily Challenge features. You can get one from the <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-primaryAccent hover:underline">Anthropic Console</a>.</span>
+                )}
               </p>
             </div>
 
@@ -95,13 +128,13 @@ export default function Settings({ settings, onSaveSettings }) {
                 type="text"
                 value={apiEndpoint}
                 onChange={(e) => setApiEndpoint(e.target.value)}
-                placeholder="https://api.anthropic.com"
+                placeholder={provider === 'Groq' ? 'https://api.groq.com/openai/v1/chat/completions' : 'https://api.anthropic.com'}
                 className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 px-4 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent transition-colors font-mono"
               />
               <div className="mt-2.5 p-3.5 bg-darkBg/60 rounded-lg border border-gray-850 flex items-start gap-2.5">
                 <AlertCircle size={16} className="text-warningAmber mt-0.5 shrink-0" />
                 <div className="text-xs text-textMuted leading-relaxed">
-                  <strong className="text-warningAmber font-medium">CORS Warning:</strong> Direct browser calls to Anthropic's production server will fail due to security settings.
+                  <strong className="text-warningAmber font-medium">CORS Warning:</strong> Direct browser calls to {provider === 'Groq' ? 'Groq\'s' : 'Anthropic\'s'} production server will fail due to security settings.
                   To bypass this, you can:
                   <ul className="list-disc pl-4 mt-1 space-y-1">
                     <li>Use a browser extension to disable CORS preflights (e.g., <code className="text-primaryAccent">Allow CORS: Access-Control-Allow-Origin</code>).</li>

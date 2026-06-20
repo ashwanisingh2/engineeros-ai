@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Check, AlertCircle, RefreshCw, Loader, Flame, CheckCircle, ArrowRight } from 'lucide-react';
+import { callAIService } from '../utils/aiService';
 
 const CHALLENGE_BANK = [
   { id: 1, topic: "Windows Server / GPO", q: "Computer par GPO link karne ke baad client PC par refresh karne ke liye CMD commands batao. Agar policy immediately force karni ho to kya parameter use karenge?" },
@@ -54,14 +55,12 @@ export default function DailyChallenge({ settings, streak, onIncrementStreak, on
     if (!userAnswer.trim()) return;
 
     if (!settings.apiKey) {
-      alert("Claude API Key missing! Settings page par key set karein.");
+      alert("API Key missing! Settings page par key set karein.");
       return;
     }
 
     setLoading(true);
     try {
-      const endpoint = `${settings.apiEndpoint.replace(/\/$/, '')}/v1/messages`;
-      
       const promptText = `Evaluate this user's answer to the technical question.
       Question: "${question.q}"
       User's Answer: "${userAnswer}"
@@ -75,28 +74,12 @@ export default function DailyChallenge({ settings, streak, onIncrementStreak, on
         "feedback": "evaluation text in Hinglish. connect theory with practice."
       }`;
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'x-api-key': settings.apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "claude-3-5-sonnet-20241022",
-          max_tokens: 1500,
-          system: "You are an interview grader. Evaluate the user response and output raw JSON only.",
-          messages: [{ role: "user", content: promptText }]
-        })
+      const evaluationText = await callAIService({
+        systemPrompt: "You are an interview grader. Evaluate the user response and output raw JSON only.",
+        prompt: promptText
       });
-
-      if (!response.ok) {
-        throw new Error(`API returned status ${response.status}`);
-      }
-
-      const data = await response.json();
-      const contentText = data.content[0].text.trim();
-      const cleaned = contentText.replace(/^```json/, '').replace(/```$/, '').trim();
+      
+      const cleaned = evaluationText.trim().replace(/^```json/, '').replace(/```$/, '').trim();
       const evalResult = JSON.parse(cleaned);
 
       setEvaluation(evalResult);

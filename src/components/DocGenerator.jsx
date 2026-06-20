@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, Copy, Save, AlertCircle, Loader, Check, ArrowRight } from 'lucide-react';
+import { callAIService } from '../utils/aiService';
 
 const TEMPLATES = [
   { id: 'SOP', name: 'Standard Operating Procedure (SOP)', placeholder: 'Describe the task. e.g. Resetting AD User Passwords, or Deploying a printer via Intune' },
@@ -32,8 +33,6 @@ export default function DocGenerator({ settings, onSaveToKnowledge }) {
     setSaved(false);
 
     try {
-      const endpoint = `${settings.apiEndpoint.replace(/\/$/, '')}/v1/messages`;
-      
       const promptText = `Write a professional enterprise IT documentation in strict, formal English using Markdown formatting.
       Template Type: ${selectedTemplate}
       Document Title: ${title}
@@ -48,27 +47,10 @@ export default function DocGenerator({ settings, onSaveToKnowledge }) {
       
       Do not write any introductory conversational text. Output ONLY the document content in markdown starting directly with a '# ${title}' heading.`;
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'x-api-key': settings.apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "claude-3-5-sonnet-20241022",
-          max_tokens: 3000,
-          system: "You are an IT Documentation bot. Generate clear, structured markdown documents in professional English.",
-          messages: [{ role: "user", content: promptText }]
-        })
+      const doc = await callAIService({
+        systemPrompt: "You are an IT Documentation bot. Generate clear, structured markdown documents in professional English.",
+        prompt: promptText
       });
-
-      if (!response.ok) {
-        throw new Error(`API failed with status ${response.status}`);
-      }
-
-      const resJson = await response.json();
-      const doc = resJson.content[0].text;
       setGeneratedDoc(doc);
     } catch (err) {
       console.error(err);

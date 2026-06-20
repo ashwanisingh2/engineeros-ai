@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Trash2, ShieldAlert, BookOpen, Terminal, Check, Plus, Loader } from 'lucide-react';
+import { callAIService } from '../utils/aiService';
 
 const SYSTEM_PROMPT = `You are EngineerOS AI — a senior IT engineer and mentor helping an IT professional grow from Desktop Support L1 to System Administrator / Cloud Engineer level.
 
@@ -161,7 +162,7 @@ Aap kya explore karna chahte hain? Neeche diye quick actions use karein ya seedh
     if (!text) return;
 
     if (!settings.apiKey) {
-      setErrorMsg("Claude API Key missing! Settings page par jaakar API Key set karein.");
+      setErrorMsg("API Key missing! Settings page par jaakar API Key set karein.");
       return;
     }
 
@@ -174,38 +175,11 @@ Aap kya explore karna chahte hain? Neeche diye quick actions use karein ya seedh
     setLoading(true);
 
     try {
-      // Prepare message request format for Claude (Anthropic Messages API)
-      const endpoint = `${settings.apiEndpoint.replace(/\/$/, '')}/v1/messages`;
-      
-      const payload = {
-        model: "claude-3-5-sonnet-20241022", // Anthropic Sonnet 3.5
-        max_tokens: 4000,
-        system: SYSTEM_PROMPT + (settings.language === 'English' ? "\nOverride communication style: ONLY explain in professional English." : ""),
-        messages: newMessages
-          .filter(m => m.id !== 'welcome')
-          .map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-      };
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'x-api-key': settings.apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(payload)
+      const systemPrompt = SYSTEM_PROMPT + (settings.language === 'English' ? "\nOverride communication style: ONLY explain in professional English." : "");
+      const assistantText = await callAIService({
+        systemPrompt,
+        messages: newMessages.filter(m => m.id !== 'welcome')
       });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(errText || `Server responded with status ${response.status}`);
-      }
-
-      const data = await response.json();
-      const assistantText = data.content[0].text;
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: assistantText }]);
       extractJsonBlocks(assistantText);
