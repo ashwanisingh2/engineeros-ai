@@ -6,8 +6,15 @@ import { COURSES_SYLLABUS_DATA } from '../data/coursesSyllabusData';
 export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [activeLessonId, setActiveLessonId] = useState(null);
-  const [lessonSubTab, setLessonSubTab] = useState('explainer'); // 'explainer', 'problem', 'solution'
+  const [lessonSubTab, setLessonSubTab] = useState('explainer'); // 'explainer', 'problem', 'solution', 'guide'
   const [generating, setGenerating] = useState(false);
+  const [guideGenerating, setGuideGenerating] = useState(false);
+
+  // AI Generated / cached study guides (13 phases) in localStorage
+  const [cachedGuides, setCachedGuides] = useState(() => {
+    const saved = localStorage.getItem('engineeros_cached_guides');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   // AI Generated / cached syllabi in localStorage
   const [cachedSyllabi, setCachedSyllabi] = useState(() => {
@@ -24,6 +31,51 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
   useEffect(() => {
     localStorage.setItem('engineeros_completed_lessons', JSON.stringify(completedLessons));
   }, [completedLessons]);
+
+  const handleGenerateStudyGuide = async (course, lesson) => {
+    if (!settings.apiKey) {
+      alert("API Key missing! Settings page par model key configure karein.");
+      return;
+    }
+    setGuideGenerating(true);
+    try {
+      const promptText = `Generate a COMPLETE, ENTERPRISE-GRADE study guide and reference manual for the IT topic: "${lesson.name}" (from the course "${course.name}").
+      
+      You must act as a Senior IT Infrastructure Architect and provide a highly detailed, professional, and click-by-click instruction guide. DO NOT output brief summaries or placeholders. Cover all of the following 13 sections in detail:
+      
+      1. **Overview**: Detailed explanation, purpose, definition, and business benefits.
+      2. **Architecture**: Core design, components, and data flows.
+      3. **Installation**: Prerequisites, system requirements, and step-by-step installation instructions.
+      4. **Configuration**: Exact navigation paths, configuration parameters, and initial setup steps.
+      5. **Administration**: Daily management tasks, monitoring metrics, and routine maintenance logs.
+      6. **Troubleshooting**: A structured database table of 3-5 common issues, possible causes, diagnostic steps, and resolutions.
+      7. **Real Industry Tasks**: Specific action items categorized by L1, L2, and L3 support tiers.
+      8. **KB Article**: A complete, copyable Knowledge Base article in the format (Title, Objective, Environment, Steps, Verification, Rollback, Notes).
+      9. **Practical Lab**: A step-by-step hands-on training lab exercise (Beginner, Intermediate, or Advanced level).
+      10. **Interview Questions**: 3-5 technical interview questions (categorized by difficulty) with detailed answers.
+      11. **Cheat Sheet**: A markdown table of important commands, configurations, or paths.
+      12. **Exam Notes**: Critical facts, mind-map notes, and 2 sample MCQs with explanations.
+      13. **Best Practices**: A checklist of industry-standard security hardening and optimization best practices.
+
+      Use clean markdown formatting, alert blocks, and code tags where appropriate. Do not output introductory text, start directly with the title and content.`;
+
+      const responseText = await callAIService({
+        systemPrompt: "You are an expert IT trainer and senior systems architect. You write exhaustive, highly detailed technical guides without placeholders.",
+        prompt: promptText
+      });
+
+      setCachedGuides(prev => {
+        const updated = { ...prev, [`${course.id}_${lesson.id}`]: responseText };
+        localStorage.setItem('engineeros_cached_guides', JSON.stringify(updated));
+        return updated;
+      });
+    } catch (err) {
+      console.error(err);
+      alert(`Study Guide generation failed: ${err.message}`);
+    } finally {
+      setGuideGenerating(false);
+    }
+  };
 
   // Sync active lesson selection
   useEffect(() => {
@@ -320,17 +372,18 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                 {activeLesson ? (
                                   <div className="flex-grow flex flex-col justify-between">
                                     <div>
-                                      {/* Tabs: explainer, problem, solution */}
-                                      <div className="flex border-b border-gray-850 gap-3 pb-1.5 mb-3">
+                                      {/* Tabs: explainer, problem, solution, guide */}
+                                      <div className="flex border-b border-gray-850 gap-3 pb-1.5 mb-3 overflow-x-auto">
                                         {[
                                           { id: 'explainer', label: '📖 Explainer' },
                                           { id: 'problem', label: '📝 Problem' },
-                                          { id: 'solution', label: '✔️ Solution' }
+                                          { id: 'solution', label: '✔️ Solution' },
+                                          { id: 'guide', label: '⚡ Enterprise Guide (13-Phases)' }
                                         ].map(tab => (
                                           <button
                                             key={tab.id}
                                             onClick={() => setLessonSubTab(tab.id)}
-                                            className={`text-[10px] font-bold pb-1 border-b-2 transition-all px-1 ${
+                                            className={`text-[10px] font-bold pb-1 border-b-2 transition-all px-1 shrink-0 ${
                                               lessonSubTab === tab.id
                                                 ? 'border-primaryAccent text-primaryAccent'
                                                 : 'border-transparent text-textMuted hover:text-textPrimary'
@@ -356,6 +409,40 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                           <div className="space-y-2">
                                             <span className="text-successGreen font-bold block">Reference Solution:</span>
                                             <p className="whitespace-pre-wrap leading-relaxed">{activeLesson.solution}</p>
+                                          </div>
+                                        )}
+                                        {lessonSubTab === 'guide' && (
+                                          <div className="space-y-3">
+                                            {cachedGuides[`${course.id}_${activeLesson.id}`] ? (
+                                              <div className="space-y-3">
+                                                <div className="flex justify-between items-center border-b border-gray-850 pb-2">
+                                                  <span className="text-primaryAccent font-bold text-[10px]">13-Phase Study Guide Cached</span>
+                                                  <button
+                                                    onClick={() => handleGenerateStudyGuide(course, activeLesson)}
+                                                    disabled={guideGenerating}
+                                                    className="text-[9px] bg-sidebarBg hover:bg-gray-800 border border-gray-800 text-textMuted px-2 py-0.5 rounded transition-all"
+                                                  >
+                                                    {guideGenerating ? "Regenerating..." : "🔄 Regenerate"}
+                                                  </button>
+                                                </div>
+                                                <div className="whitespace-pre-wrap leading-relaxed select-text bg-black/25 p-3 rounded-lg border border-gray-850 overflow-y-auto max-h-[220px] font-mono text-[10px]">
+                                                  {cachedGuides[`${course.id}_${activeLesson.id}`]}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="text-center py-4 space-y-2">
+                                                <p className="text-[10px] text-textMuted leading-relaxed">
+                                                  Full 13-Phase Enterprise Study Guide is not yet generated for this topic.
+                                                </p>
+                                                <button
+                                                  onClick={() => handleGenerateStudyGuide(course, activeLesson)}
+                                                  disabled={guideGenerating}
+                                                  className="bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-1 px-3 rounded shadow-lg hover:shadow-indigo-500/20 transition-all text-[10px] flex items-center justify-center gap-1.5 mx-auto disabled:opacity-50"
+                                                >
+                                                  {guideGenerating ? <Loader size={10} className="animate-spin" /> : "⚡ Generate 13-Phase Guide"}
+                                                </button>
+                                              </div>
+                                            )}
                                           </div>
                                         )}
                                       </div>
