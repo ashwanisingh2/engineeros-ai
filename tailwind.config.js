@@ -15,6 +15,7 @@ export default {
         successGreen: '#22c55e',
         warningAmber: '#f59e0b',
         textPrimary: '#e2e8f0',
+        textSecondary: '#94a3b8',
         textMuted: '#64748b',
       },
     },

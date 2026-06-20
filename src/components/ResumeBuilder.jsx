@@ -105,13 +105,48 @@ export default function ResumeBuilder({ settings }) {
       }`;
 
       const aiResponse = await callAIService({
-        systemPrompt: "You are a professional IT resume writer. Output raw JSON objects only.",
+        systemPrompt: "You are a professional IT resume writer. Return strictly a raw, valid JSON object matching the format. All quotes inside string values must be escaped as \\\", and no literal newlines should exist in string values.",
         prompt: promptText
       });
 
-      const cleaned = aiResponse.trim().replace(/^```json/, '').replace(/```$/, '').trim();
+      const firstBrace = aiResponse.indexOf('{');
+      const lastBrace = aiResponse.lastIndexOf('}');
+      if (firstBrace === -1 || lastBrace === -1) {
+        throw new Error("AI response did not contain a valid JSON object. Please check your inputs and try again.");
+      }
+      let cleaned = aiResponse.slice(firstBrace, lastBrace + 1);
+
+      // Clean literal newlines inside double-quoted JSON strings
+      cleaned = cleaned.replace(/"([^"\\]|\\.)*"/g, (match) => {
+        return match.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+      });
+
+      // Remove trailing commas before closing braces/brackets
+      cleaned = cleaned.replace(/,\s*([\]}])/g, '$1');
+
       const parsed = JSON.parse(cleaned);
-      setResumeData(parsed);
+      
+      // Sanitize fields to prevent rendering/mapping crashes
+      const sanitized = {
+        summary: typeof parsed.summary === 'string' ? parsed.summary : '',
+        keywords: typeof parsed.keywords === 'string' ? parsed.keywords : '',
+        experience: Array.isArray(parsed.experience) 
+          ? parsed.experience.filter(e => typeof e === 'string') 
+          : [],
+        certs: {}
+      };
+
+      if (parsed.certs && typeof parsed.certs === 'object' && !Array.isArray(parsed.certs)) {
+        Object.entries(parsed.certs).forEach(([certName, bullets]) => {
+          if (Array.isArray(bullets)) {
+            sanitized.certs[certName] = bullets.filter(b => typeof b === 'string');
+          } else if (typeof bullets === 'string') {
+            sanitized.certs[certName] = [bullets];
+          }
+        });
+      }
+      
+      setResumeData(sanitized);
     } catch (err) {
       console.error(err);
       alert(`Resume generation failed: ${err.message}`);
@@ -252,7 +287,7 @@ export default function ResumeBuilder({ settings }) {
       </head>
       <body>
         <div class="header">
-          <h1>Systems Engineer Resume</h1>
+          <h1>${targetRole} Resume</h1>
           <div class="subtitle">Target Role: ${targetRole}</div>
         </div>
         
