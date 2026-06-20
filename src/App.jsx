@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Bot, BookOpen, Terminal, Award, Settings as SettingsIcon, FileText, 
-  Flame, Menu, X, ShieldAlert, Cpu 
+  Flame, Menu, X, ShieldAlert, Cpu, Inbox, ClipboardList, Server, Sparkles 
 } from 'lucide-react';
 import AIChat from './components/AIChat';
 import KnowledgeBase from './components/KnowledgeBase';
@@ -11,6 +11,10 @@ import CourseRoadmap from './components/CourseRoadmap';
 import DocGenerator from './components/DocGenerator';
 import DailyChallenge from './components/DailyChallenge';
 import Settings from './components/Settings';
+import TicketSimulator from './components/TicketSimulator';
+import ExamPractice from './components/ExamPractice';
+import LabGuides from './components/LabGuides';
+import ResumeAnalyzer from './components/ResumeAnalyzer';
 
 const STARTER_SCRIPTS = [
   {
@@ -413,14 +417,19 @@ export default function App() {
   };
 
   const handleSaveKnowledgeItem = (item) => {
+    const itemWithDefaults = {
+      id: item.id || Date.now().toString(),
+      date: item.date || new Date().toLocaleDateString(),
+      ...item
+    };
     setKnowledgeItems(prev => {
-      const idx = prev.findIndex(i => i.id === item.id);
+      const idx = prev.findIndex(i => i.id === itemWithDefaults.id);
       if (idx > -1) {
         const updated = [...prev];
-        updated[idx] = item;
+        updated[idx] = itemWithDefaults;
         return updated;
       }
-      return [item, ...prev];
+      return [itemWithDefaults, ...prev];
     });
   };
 
@@ -482,6 +491,10 @@ export default function App() {
 
   const navItems = [
     { id: 'chat', label: 'AI Chat', icon: Bot },
+    { id: 'tickets', label: 'Ticket Simulator', icon: Inbox },
+    { id: 'quizzes', label: 'Exam Practice', icon: ClipboardList },
+    { id: 'labs', label: 'Home Lab Guides', icon: Server },
+    { id: 'resume', label: 'Resume Matcher', icon: Sparkles },
     { id: 'knowledge', label: 'Knowledge Base', icon: BookOpen },
     { id: 'powershell', label: 'PowerShell Library', icon: Terminal },
     { id: 'interview', label: 'Interview Prep', icon: Award },
@@ -620,6 +633,18 @@ export default function App() {
               onSaveToKnowledge={handleChatSaveKnowledge} 
               onSaveToScripts={handleChatSaveScript} 
             />
+          )}
+          {activeTab === 'tickets' && (
+            <TicketSimulator onSaveToKnowledge={handleSaveKnowledgeItem} />
+          )}
+          {activeTab === 'quizzes' && (
+            <ExamPractice />
+          )}
+          {activeTab === 'labs' && (
+            <LabGuides />
+          )}
+          {activeTab === 'resume' && (
+            <ResumeAnalyzer settings={settings} />
           )}
           {activeTab === 'knowledge' && (
             <KnowledgeBase 
