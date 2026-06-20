@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Send, Loader, AlertTriangle, Check, BookOpen, User, Terminal, ArrowRight } from 'lucide-react';
+import { Play, Send, Loader, Check, BookOpen, Terminal, ArrowRight, ClipboardList } from 'lucide-react';
 import { callAIService } from '../utils/aiService';
 
 export default function TicketSimulator({ onSaveToKnowledge }) {
   const [tier, setTier] = useState('L1 Support (Desktop)');
-  const [ticket, setTicket] = useState(null); // { id, title, description, priority, category, user, status }
+  const [ticket, setTicket] = useState(null); // { id, title, description, priority, category, user, status, tasks: [] }
   const [logs, setLogs] = useState([]); // Array of { role: 'system' | 'user', content: '', rating?: number }
   const [actionInput, setActionInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
-  const [evaluation, setEvaluation] = useState(null); // { score, feedback, rca }
+  const [evaluation, setEvaluation] = useState(null); // { score, feedback, rca, method, kbSolution }
+  const [completedTasks, setCompletedTasks] = useState({}); // { [idx]: boolean }
 
   const chatEndRef = useRef(null);
 
@@ -23,6 +24,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
     setLogs([]);
     setEvaluation(null);
     setActionInput('');
+    setCompletedTasks({});
 
     try {
       const promptText = `Generate a realistic IT support ticket for a ${tier} engineer.
@@ -36,7 +38,13 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
         "description": "Full description from the user reporting the issue",
         "priority": "P1-Critical|P2-High|P3-Medium|P4-Low",
         "category": "active_directory|networking|azure|m365|linux|powershell|hardware|general",
-        "user": "Full name of reporting employee"
+        "user": "Full name of reporting employee",
+        "tasks": [
+          "Check local system diagnostic indicators or basic connection logs",
+          "Isolate the root cause of the error or check server permissions",
+          "Apply the corrective command, script, or settings tweak",
+          "Confirm fix is operational and request client confirmation"
+        ]
       }`;
 
       const responseText = await callAIService({
@@ -47,7 +55,16 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
       const cleaned = responseText.trim().replace(/^```json/, '').replace(/```$/, '').trim();
       const parsed = JSON.parse(cleaned);
 
-      const ticketData = { ...parsed, status: 'Open' };
+      const ticketData = { 
+        ...parsed, 
+        tasks: parsed.tasks || [
+          "Check system logs or run initial diagnostics",
+          "Identify and isolate the root cause",
+          "Apply corrective fix or run commands",
+          "Confirm solution is working with client"
+        ],
+        status: 'Open' 
+      };
       setTicket(ticketData);
       
       // Seed first system message
@@ -103,18 +120,19 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
       const cleaned = responseText.trim().replace(/^```json/, '').replace(/```$/, '').trim();
       const parsed = JSON.parse(cleaned);
 
-      setLogs(prev => [
-        ...prev,
+      const updatedLogs = [
+        ...newLogs,
         {
           role: 'system',
           content: `⚡ **System Output / User Response:**\n${parsed.response}`,
           rating: parsed.rating
         }
-      ]);
+      ];
+      setLogs(updatedLogs);
 
       if (parsed.isSolved) {
         setTicket(prev => ({ ...prev, status: 'Solved' }));
-        handleEvaluateTicket(newLogs, parsed.response);
+        handleEvaluateTicket(updatedLogs, parsed.response);
       }
     } catch (e) {
       console.error(e);
@@ -143,7 +161,8 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
         "score": 85,
         "feedback": "Overall summary of the engineer's performance in Hinglish.",
         "rca": "Root Cause Analysis details (written in English) for saving to the KB.",
-        "kbSolution": "Final resolution steps (written in English) for saving to the KB."
+        "method": "Resolution method and step-by-step diagnostic/remediation procedure followed by the engineer (written in English).",
+        "kbSolution": "Final permanent resolution steps (written in English) for saving to the KB."
       }`;
 
       const responseText = await callAIService({
@@ -170,13 +189,20 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
     onSaveToKnowledge({
       title: `RCA: ${ticket.id} - ${ticket.title}`,
       problem: ticket.description,
-      solution: `Root Cause:\n${evaluation.rca}\n\nResolution:\n${evaluation.kbSolution}`,
+      solution: `Root Cause:\n${evaluation.rca}\n\nResolution Method:\n${evaluation.method || 'Troubleshooting logs review'}\n\nResolution:\n${evaluation.kbSolution}`,
       category: ticket.category,
       severity: ticket.priority.toLowerCase().split('-')[0],
       tags: ['simulated', ticket.category]
     });
 
     alert("Resolved Ticket successfully saved to Knowledge Base!");
+  };
+
+  const toggleTask = (idx) => {
+    setCompletedTasks(prev => ({
+      ...prev,
+      [idx]: !prev[idx]
+    }));
   };
 
   return (
@@ -216,7 +242,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
 
       {ticket ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left panel: Ticket Info */}
+          {/* Left panel: Ticket Info & Tasks */}
           <div className="space-y-6">
             <div className="bg-cardBg border border-gray-800 rounded-xl p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-gray-850 pb-3">
@@ -252,18 +278,72 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
               </div>
             </div>
 
+            {/* Troubleshooting Tasks Checklist */}
+            {ticket.tasks && (
+              <div className="bg-cardBg border border-gray-800 rounded-xl p-5 space-y-3 animate-fadeIn">
+                <h4 className="text-xs font-bold text-textPrimary flex items-center gap-1.5 border-b border-gray-850 pb-2">
+                  <ClipboardList size={14} className="text-primaryAccent" />
+                  <span>Troubleshooting Checklist</span>
+                </h4>
+                <div className="space-y-2">
+                  {ticket.tasks.map((task, idx) => {
+                    const isChecked = !!completedTasks[idx];
+                    return (
+                      <label
+                        key={idx}
+                        className={`flex items-start gap-2.5 p-2 rounded-lg border cursor-pointer select-none transition-all text-[11px] font-medium ${
+                          isChecked
+                            ? 'border-successGreen/30 bg-successGreen/5 text-successGreen'
+                            : 'border-gray-850 bg-sidebarBg/20 text-textSecondary hover:border-gray-800'
+                        }`}
+                        onClick={() => toggleTask(idx)}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {}}
+                          className="accent-successGreen mt-0.5 cursor-pointer"
+                        />
+                        <span className={isChecked ? 'line-through text-successGreen/75' : ''}>
+                          {task}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Scorecard block when closed */}
             {evaluation && (
-              <div className="bg-successGreen/5 border border-successGreen/20 rounded-xl p-5 space-y-3 animate-fadeIn">
+              <div className="bg-successGreen/5 border border-successGreen/20 rounded-xl p-5 space-y-4 animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-gray-850 pb-2">
                   <span className="text-xs font-bold text-successGreen uppercase tracking-wider">Evaluation Card</span>
                   <span className="text-lg font-bold font-mono text-successGreen">{evaluation.score}/100</span>
                 </div>
                 <p className="text-xs leading-relaxed text-textSecondary">{evaluation.feedback}</p>
                 
+                {/* Details Section */}
+                <div className="space-y-3 pt-2 border-t border-gray-850 text-[11px] leading-relaxed">
+                  <div>
+                    <span className="font-bold text-primaryAccent block mb-0.5">Root Cause (RCA):</span>
+                    <p className="text-textSecondary bg-darkBg/30 p-2 rounded border border-gray-850">{evaluation.rca}</p>
+                  </div>
+                  {evaluation.method && (
+                    <div>
+                      <span className="font-bold text-amber-400 block mb-0.5">Resolution Method:</span>
+                      <p className="text-textSecondary bg-darkBg/30 p-2 rounded border border-gray-850">{evaluation.method}</p>
+                    </div>
+                  )}
+                  <div>
+                    <span className="font-bold text-successGreen block mb-0.5">Permanent Fix:</span>
+                    <p className="text-textSecondary bg-darkBg/30 p-2 rounded border border-gray-850">{evaluation.kbSolution}</p>
+                  </div>
+                </div>
+
                 <button
                   onClick={handleSaveToKB}
-                  className="w-full flex items-center justify-center gap-1.5 bg-sidebarBg hover:bg-gray-800 text-textPrimary text-xs font-bold py-2 rounded-lg border border-gray-850 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 bg-sidebarBg hover:bg-gray-800 text-textPrimary text-xs font-bold py-2 rounded-lg border border-gray-850 transition-colors mt-2"
                 >
                   <BookOpen size={12} />
                   Save to Knowledge Base
@@ -273,7 +353,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
           </div>
 
           {/* Right panel: Log console */}
-          <div className="lg:col-span-2 flex flex-col bg-cardBg border border-gray-800 rounded-xl overflow-hidden h-[480px]">
+          <div className="lg:col-span-2 flex flex-col bg-cardBg border border-gray-800 rounded-xl overflow-hidden h-[540px]">
             {/* Thread Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {logs.map((log, idx) => (
@@ -329,7 +409,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
                   disabled={evaluating || !actionInput.trim()}
                   className="bg-primaryAccent hover:bg-indigo-700 text-white rounded-lg p-2 transition-all disabled:opacity-50"
                 >
-                  <Send size={14} />
+                  <Send size={14} className="transform rotate-45" />
                 </button>
                 
                 {logs.length > 2 && (
