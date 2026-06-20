@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Send, Loader, Check, BookOpen, Terminal, ArrowRight, ClipboardList } from 'lucide-react';
+import { Play, Send, Loader, Check, BookOpen, Terminal, ArrowRight, ClipboardList, Timer, Award } from 'lucide-react';
 import { callAIService } from '../utils/aiService';
 
 export default function TicketSimulator({ onSaveToKnowledge }) {
   const [tier, setTier] = useState('L1 Support (Desktop)');
+  const [difficulty, setDifficulty] = useState('Medium'); // 'Easy', 'Medium', 'Hard'
   const [ticket, setTicket] = useState(null); // { id, title, description, priority, category, user, status, tasks: [] }
   const [logs, setLogs] = useState([]); // Array of { role: 'system' | 'user', content: '', rating?: number }
   const [actionInput, setActionInput] = useState('');
@@ -11,12 +12,46 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
   const [evaluating, setEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState(null); // { score, feedback, rca, method, kbSolution }
   const [completedTasks, setCompletedTasks] = useState({}); // { [idx]: boolean }
+  
+  // Timer States
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [totalTimeLimit, setTotalTimeLimit] = useState(0);
+  const [timeTaken, setTimeTaken] = useState(0);
+  const [isPersonalBest, setIsPersonalBest] = useState(false);
+  const [earlyBonusEarned, setEarlyBonusEarned] = useState(false);
 
   const chatEndRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
+
+  const handleTimeoutSubmit = () => {
+    // Append auto-submit message
+    const expiredMsg = "Time Expired! System auto-submitted final resolution steps.";
+    const newLogs = [...logs, { role: 'user', content: expiredMsg }];
+    setLogs(newLogs);
+    setTicket(prev => ({ ...prev, status: 'Closed' }));
+    handleEvaluateTicket(newLogs, true);
+  };
+
+  // Countdown timer logic
+  useEffect(() => {
+    if (!ticket || ticket.status === 'Closed' || ticket.status === 'Solved') return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleTimeoutSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [ticket, handleTimeoutSubmit]);
 
   const handleGenerateTicket = async () => {
     setLoading(true);
@@ -25,6 +60,13 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
     setEvaluation(null);
     setActionInput('');
     setCompletedTasks({});
+    setIsPersonalBest(false);
+    setEarlyBonusEarned(false);
+
+    // Difficulty timer boundaries
+    const timeLimit = difficulty === 'Easy' ? 900 : difficulty === 'Medium' ? 600 : 420;
+    setTotalTimeLimit(timeLimit);
+    setTimeLeft(timeLimit);
 
     try {
       const promptText = `Generate a realistic IT support ticket for a ${tier} engineer.
@@ -132,7 +174,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
 
       if (parsed.isSolved) {
         setTicket(prev => ({ ...prev, status: 'Solved' }));
-        handleEvaluateTicket(updatedLogs, parsed.response);
+        handleEvaluateTicket(updatedLogs, false);
       }
     } catch (e) {
       console.error(e);
@@ -142,8 +184,13 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
     }
   };
 
-  const handleEvaluateTicket = async (currentLogs, lastResponse) => {
+  const handleEvaluateTicket = async (currentLogs, isTimeout = false) => {
     setEvaluating(true);
+    
+    // Save how long it took (seconds)
+    const elapsedSeconds = totalTimeLimit - timeLeft;
+    setTimeTaken(elapsedSeconds);
+
     try {
       const allLogs = currentLogs || logs;
       const promptText = `The ticket troubleshooting simulation has concluded.
@@ -159,10 +206,10 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
       Respond ONLY with a valid JSON object. Do not include markdown code block formatting or introductory text. Return strictly the raw JSON object matching this format:
       {
         "score": 85,
-        "feedback": "Overall summary of the engineer's performance in Hinglish.",
-        "rca": "Root Cause Analysis details (written in English) for saving to the KB.",
-        "method": "Resolution method and step-by-step diagnostic/remediation procedure followed by the engineer (written in English).",
-        "kbSolution": "Final permanent resolution steps (written in English) for saving to the KB."
+        "feedback": "Overall summary of the engineer's performance.",
+        "rca": "Root Cause Analysis details (written in English).",
+        "method": "Resolution method and step-by-step diagnostic/remediation procedure followed.",
+        "kbSolution": "Final permanent resolution steps (written in English)."
       }`;
 
       const responseText = await callAIService({
@@ -173,8 +220,49 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
       const cleaned = responseText.trim().replace(/^```json/, '').replace(/```$/, '').trim();
       const evalResult = JSON.parse(cleaned);
 
+      // Score Penalty and Bonus calculations
+      let finalScore = evalResult.score;
+      let feedbackPrefix = '';
+
+      if (isTimeout) {
+        finalScore = Math.max(0, finalScore - 10);
+        feedbackPrefix = "⏰ **Time Expired!** applied a -10 penalty. ";
+      } else {
+        // Bonus for finishing in the first half of the limit
+        if (timeLeft >= (totalTimeLimit / 2)) {
+          finalScore = Math.min(100, finalScore + 5);
+          feedbackPrefix = "🎉 **Early Finish Bonus (+5)!** ";
+          setEarlyBonusEarned(true);
+        }
+        
+        // Personal Best times tracking
+        const savedTimes = JSON.parse(localStorage.getItem('engineeros_ticket_times') || '{}');
+        const category = ticket.category || 'general';
+        const prevBest = savedTimes[category];
+        
+        if (prevBest === undefined || elapsedSeconds < prevBest) {
+          savedTimes[category] = elapsedSeconds;
+          localStorage.setItem('engineeros_ticket_times', JSON.stringify(savedTimes));
+          setIsPersonalBest(true);
+        }
+      }
+
+      evalResult.score = finalScore;
+      evalResult.feedback = feedbackPrefix + evalResult.feedback;
+
       setEvaluation(evalResult);
       setTicket(prev => ({ ...prev, status: 'Closed' }));
+
+      // Log activity to recent activities in localStorage
+      const activities = JSON.parse(localStorage.getItem('engineeros_activities') || '[]');
+      activities.unshift({
+        id: Date.now().toString(),
+        action: "Ticket Solved",
+        details: `${ticket.id}: ${ticket.title} (Score: ${finalScore}/100)`,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('engineeros_activities', JSON.stringify(activities.slice(0, 5)));
+
     } catch (e) {
       console.error(e);
       alert(`Final evaluation failed: ${e.message}`);
@@ -205,6 +293,25 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
     }));
   };
 
+  const formatTimer = (seconds) => {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
+  };
+
+  const getTimerColorClass = () => {
+    const pct = (timeLeft / totalTimeLimit) * 100;
+    if (pct <= 25) return 'text-red-500 font-bold animate-pulse';
+    if (pct <= 50) return 'text-amber-500 font-bold';
+    return 'text-textPrimary font-semibold';
+  };
+
+  const formatTimeInterval = (totalSec) => {
+    const min = Math.floor(totalSec / 60);
+    const sec = totalSec % 60;
+    return `${min > 0 ? `${min} min ` : ''}${sec} sec`;
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Header */}
@@ -216,28 +323,17 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
           <p className="text-textMuted mt-1">Practice resolving real-world helpdesk tickets, apply commands, and get scored.</p>
         </div>
         
-        {/* Tier Selector */}
-        <div className="flex items-center gap-2 shrink-0">
-          <select
-            value={tier}
-            onChange={(e) => setTier(e.target.value)}
-            disabled={loading || (ticket && ticket.status !== 'Closed')}
-            className="bg-cardBg border border-gray-800 text-textPrimary text-xs font-semibold py-2 px-3 rounded-lg focus:outline-none focus:border-primaryAccent"
-          >
-            <option value="L1 Support (Desktop)">L1 Support (Desktop / OS)</option>
-            <option value="L2 Support (Sysadmin)">L2 Support (AD / Server / GPO)</option>
-            <option value="L3 Support (Cloud/Network)">L3 Support (Azure / M365 / Cisco)</option>
-          </select>
-          
-          <button
-            onClick={handleGenerateTicket}
-            disabled={loading}
-            className="bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:shadow-indigo-500/20 transition-all text-xs flex items-center gap-1.5"
-          >
-            {loading ? <Loader size={12} className="animate-spin" /> : <Play size={12} />}
-            New Ticket
-          </button>
-        </div>
+        {ticket && (
+          <div className="flex items-center gap-2 bg-sidebarBg border border-gray-850 px-4 py-2.5 rounded-xl">
+            <Timer size={16} className="text-textMuted" />
+            <div className="text-xs">
+              <span className="text-textMuted uppercase font-bold text-[9px] block">Time Remaining</span>
+              <span className={`font-mono text-sm block mt-0.5 ${getTimerColorClass()}`}>
+                {formatTimer(timeLeft)}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {ticket ? (
@@ -318,8 +414,23 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
             {evaluation && (
               <div className="bg-successGreen/5 border border-successGreen/20 rounded-xl p-5 space-y-4 animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-gray-850 pb-2">
-                  <span className="text-xs font-bold text-successGreen uppercase tracking-wider">Evaluation Card</span>
-                  <span className="text-lg font-bold font-mono text-successGreen">{evaluation.score}/100</span>
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-bold text-successGreen uppercase tracking-wider block">Evaluation Card</span>
+                    {isPersonalBest && (
+                      <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 w-fit">
+                        ★ Personal Best Time
+                      </span>
+                    )}
+                    {earlyBonusEarned && (
+                      <span className="bg-primaryAccent/10 border border-primaryAccent/30 text-primaryAccent text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 w-fit">
+                        ⚡ Speed Bonus (+5)
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold font-mono text-successGreen block">{evaluation.score}/100</span>
+                    <span className="text-[9px] text-textMuted block font-mono">Time taken: {formatTimeInterval(timeTaken)}</span>
+                  </div>
                 </div>
                 <p className="text-xs leading-relaxed text-textSecondary">{evaluation.feedback}</p>
                 
@@ -341,13 +452,21 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleSaveToKB}
-                  className="w-full flex items-center justify-center gap-1.5 bg-sidebarBg hover:bg-gray-800 text-textPrimary text-xs font-bold py-2 rounded-lg border border-gray-850 transition-colors mt-2"
-                >
-                  <BookOpen size={12} />
-                  Save to Knowledge Base
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSaveToKB}
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-sidebarBg hover:bg-gray-800 text-textPrimary text-xs font-bold py-2 rounded-lg border border-gray-850 transition-colors"
+                  >
+                    <BookOpen size={12} />
+                    Save to KB
+                  </button>
+                  <button
+                    onClick={() => setTicket(null)}
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-primaryAccent hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                  >
+                    Next Ticket
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -415,7 +534,7 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
                 {logs.length > 2 && (
                   <button
                     type="button"
-                    onClick={() => handleEvaluateTicket()}
+                    onClick={() => handleEvaluateTicket(null, false)}
                     className="bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold py-2 px-3 rounded-lg flex items-center gap-1 transition-all"
                   >
                     Resolve
@@ -426,12 +545,77 @@ export default function TicketSimulator({ onSaveToKnowledge }) {
           </div>
         </div>
       ) : (
-        <div className="bg-cardBg border border-gray-800 rounded-xl p-16 text-center max-w-lg mx-auto">
-          <Terminal className="mx-auto text-textMuted mb-4 opacity-40 animate-pulse" size={44} />
-          <h3 className="text-lg font-bold text-textPrimary">ITS Simulator Console Offline</h3>
-          <p className="text-textMuted text-xs mt-1.5 leading-relaxed">
-            Select a Tier (L1 Support for Desktop support, L2 for Active Directory setups) and click **"New Ticket"** to launch an interactive live troubleshooting training sandbox.
-          </p>
+        /* Configuration Landing State prior to generating a ticket */
+        <div className="bg-cardBg border border-gray-800 rounded-xl p-8 max-w-xl mx-auto space-y-6">
+          <div className="text-center">
+            <Terminal className="mx-auto text-textMuted mb-3 opacity-40" size={44} />
+            <h3 className="text-lg font-bold text-textPrimary">ITS Simulator Sandbox</h3>
+            <p className="text-textMuted text-xs mt-1.5 max-w-sm mx-auto leading-relaxed">
+              Select your tier level and difficulty parameters below to generate a live interactive mock support ticket.
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <div>
+              <label className="block text-xs font-semibold text-textMuted uppercase tracking-wider mb-2">
+                Engineering Support Tier
+              </label>
+              <select
+                value={tier}
+                onChange={(e) => setTier(e.target.value)}
+                className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 px-4 text-xs font-semibold text-textPrimary focus:outline-none focus:border-primaryAccent"
+              >
+                <option value="L1 Support (Desktop)">L1 Support (Desktop / Hardware / OS)</option>
+                <option value="L2 Support (Sysadmin)">L2 Support (AD / DHCP / Windows Server)</option>
+                <option value="L3 Support (Cloud/Network)">L3 Support (Azure / M365 / Entra ID / AWS)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-textMuted uppercase tracking-wider mb-2">
+                Simulation Difficulty
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { mode: 'Easy', time: '15 min' },
+                  { mode: 'Medium', time: '10 min' },
+                  { mode: 'Hard', time: '7 min' }
+                ].map(d => (
+                  <button
+                    key={d.mode}
+                    type="button"
+                    onClick={() => setDifficulty(d.mode)}
+                    className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all ${
+                      difficulty === d.mode 
+                        ? 'border-primaryAccent bg-primaryAccent/10 text-primaryAccent' 
+                        : 'border-gray-850 hover:bg-gray-900/40 text-textSecondary'
+                    }`}
+                  >
+                    <div>{d.mode}</div>
+                    <div className="text-[9px] text-textMuted font-mono font-normal mt-0.5">{d.time} limit</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={handleGenerateTicket}
+              disabled={loading}
+              className="w-full bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg shadow-lg hover:shadow-indigo-500/25 transition-all text-xs flex items-center justify-center gap-1.5 mt-2"
+            >
+              {loading ? (
+                <>
+                  <Loader size={14} className="animate-spin" />
+                  Generating Ticket Parameters...
+                </>
+              ) : (
+                <>
+                  <Play size={14} />
+                  Start Ticket Simulation
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
     </div>

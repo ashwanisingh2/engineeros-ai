@@ -1,15 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Shield, Key, Eye, EyeOff, AlertCircle, RefreshCw, Globe, Server } from 'lucide-react';
 
 export default function Settings({ settings, onSaveSettings }) {
   const [provider, setProvider] = useState(settings.provider || 'Claude');
   const [apiKey, setApiKey] = useState(settings.apiKey || '');
   const [showKey, setShowKey] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [language, setLanguage] = useState(settings.language || 'Hinglish');
   const [currentRole, setCurrentRole] = useState(settings.currentRole || 'Desktop Support L1');
   const [targetRole, setTargetRole] = useState(settings.targetRole || 'Sysadmin L2');
   const [apiEndpoint, setApiEndpoint] = useState(settings.apiEndpoint || 'https://api.anthropic.com');
   const [saveStatus, setSaveStatus] = useState('');
+
+  // Load from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('engineeros_settings');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.provider) setProvider(parsed.provider);
+      if (parsed.apiKey !== undefined) setApiKey(parsed.apiKey);
+      if (parsed.language) setLanguage(parsed.language);
+      if (parsed.currentRole) setCurrentRole(parsed.currentRole);
+      if (parsed.targetRole) setTargetRole(parsed.targetRole);
+      if (parsed.apiEndpoint) setApiEndpoint(parsed.apiEndpoint);
+    }
+  }, []);
+
+  // Save to localStorage on change and propagate settings to parent App component
+  useEffect(() => {
+    const settingsPayload = {
+      apiKey,
+      language,
+      currentRole,
+      targetRole,
+      apiEndpoint,
+      endpoint: apiEndpoint,
+      provider,
+    };
+    localStorage.setItem('engineeros_settings', JSON.stringify(settingsPayload));
+    if (onSaveSettings) {
+      onSaveSettings(settingsPayload);
+    }
+  }, [apiKey, language, currentRole, targetRole, apiEndpoint, provider, onSaveSettings]);
 
   const handleProviderChange = (newProvider) => {
     setProvider(newProvider);
@@ -24,18 +56,28 @@ export default function Settings({ settings, onSaveSettings }) {
     }
   };
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    onSaveSettings({
-      apiKey,
-      language,
-      currentRole,
-      targetRole,
-      apiEndpoint,
-      provider,
-    });
-    setSaveStatus('Settings successfully saved!');
-    setTimeout(() => setSaveStatus(''), 3000);
+  const handleClearSettings = () => {
+    if (window.confirm("Are you sure you want to clear all settings? This will clear your API key, endpoint, and roles.")) {
+      localStorage.removeItem('engineeros_settings');
+      setProvider('Claude');
+      setApiKey('');
+      setLanguage('Hinglish');
+      setCurrentRole('Desktop Support L1');
+      setTargetRole('Sysadmin L2');
+      setApiEndpoint('https://api.anthropic.com');
+      if (onSaveSettings) {
+        onSaveSettings({
+          apiKey: '',
+          language: 'Hinglish',
+          currentRole: 'Desktop Support L1',
+          targetRole: 'Sysadmin L2',
+          apiEndpoint: 'https://api.anthropic.com',
+          provider: 'Claude'
+        });
+      }
+      setSaveStatus('Settings successfully cleared!');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
   };
 
   const handleReset = () => {
@@ -52,12 +94,20 @@ export default function Settings({ settings, onSaveSettings }) {
           <h1 className="text-3xl font-bold tracking-tight text-textPrimary">Configuration & Settings</h1>
           <p className="text-textMuted mt-1">Configure your Claude API credentials, roles, and preferences.</p>
         </div>
-        <button
-          onClick={handleReset}
-          className="text-xs bg-red-950 text-red-400 border border-red-800 hover:bg-red-900 px-3 py-2 rounded-md font-medium transition-colors"
-        >
-          Reset All Data
-        </button>
+        <div className="flex gap-2.5">
+          <button
+            onClick={handleClearSettings}
+            className="text-xs bg-gray-900 hover:bg-gray-800 text-textSecondary border border-gray-800 px-3 py-2 rounded-md font-semibold transition-colors"
+          >
+            Clear All Settings
+          </button>
+          <button
+            onClick={handleReset}
+            className="text-xs bg-red-950 text-red-400 border border-red-800 hover:bg-red-900 px-3 py-2 rounded-md font-semibold transition-colors"
+          >
+            Reset All Data
+          </button>
+        </div>
       </div>
 
       {saveStatus && (
@@ -67,7 +117,7 @@ export default function Settings({ settings, onSaveSettings }) {
         </div>
       )}
 
-      <form onSubmit={handleSave} className="space-y-6">
+      <div className="space-y-6">
         {/* API Credentials */}
         <div className="bg-cardBg border border-gray-800 rounded-xl p-6">
           <h2 className="text-lg font-semibold flex items-center gap-2 text-primaryAccent mb-4">
@@ -96,9 +146,11 @@ export default function Settings({ settings, onSaveSettings }) {
               </label>
               <div className="relative">
                 <input
-                  type={showKey ? 'text' : 'password'}
-                  value={apiKey}
+                  type="text"
+                  value={isFocused || showKey ? apiKey : (apiKey ? '...' + apiKey.slice(-4) : '')}
                   onChange={(e) => setApiKey(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
                   placeholder={provider === 'Groq' ? 'Enter gsk_... API Key' : 'Enter sk-ant-... API Key'}
                   className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 pl-4 pr-12 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent transition-colors font-mono"
                 />
@@ -222,18 +274,7 @@ export default function Settings({ settings, onSaveSettings }) {
             </div>
           </div>
         </div>
-
-        {/* Submit */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-lg hover:shadow-indigo-500/20 transition-all text-sm"
-          >
-            <Save size={18} />
-            Save Configuration
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

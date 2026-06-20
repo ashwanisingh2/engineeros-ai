@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Check, AlertCircle, RefreshCw, Loader, Flame, CheckCircle, ArrowRight } from 'lucide-react';
 import { callAIService } from '../utils/aiService';
+import Leaderboard from './Leaderboard';
 
 const CHALLENGE_BANK = [
   { id: 1, topic: "Windows Server / GPO", q: "Computer par GPO link karne ke baad client PC par refresh karne ke liye CMD commands batao. Agar policy immediately force karni ho to kya parameter use karenge?" },
@@ -15,7 +16,7 @@ const CHALLENGE_BANK = [
   { id: 10, topic: "SCCM", q: "SCCM client boundary groups aur boundary relationships boundaries configure karne ka core logical criteria kya hota hai?" }
 ];
 
-export default function DailyChallenge({ settings, streak, onIncrementStreak, onResetStreak }) {
+export default function DailyChallenge({ settings, streak, courses, onIncrementStreak, onResetStreak }) {
   const [question, setQuestion] = useState(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,8 @@ export default function DailyChallenge({ settings, streak, onIncrementStreak, on
       // Handle streak updates
       if (evalResult.score >= 5) {
         onIncrementStreak();
+        const done = parseInt(localStorage.getItem('engineeros_challenges_done') || '0');
+        localStorage.setItem('engineeros_challenges_done', (done + 1).toString());
       } else {
         onResetStreak();
       }
@@ -214,6 +217,9 @@ export default function DailyChallenge({ settings, streak, onIncrementStreak, on
           </form>
         </div>
       )}
+
+      {/* Leaderboard Section */}
+      <Leaderboard streak={streak} settings={settings} courses={courses} />
     </div>
   );
 }

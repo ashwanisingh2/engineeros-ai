@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Bot, BookOpen, Terminal, Award, Settings as SettingsIcon, FileText, 
-  Flame, Menu, X, ShieldAlert, Cpu, Inbox, ClipboardList, Server, Sparkles 
+  Flame, Menu, X, ShieldAlert, Cpu, Inbox, ClipboardList, Server, Sparkles,
+  Calendar, User, Home
 } from 'lucide-react';
+import Dashboard from './components/Dashboard';
 import AIChat from './components/AIChat';
 import KnowledgeBase from './components/KnowledgeBase';
 import PowerShellLibrary from './components/PowerShellLibrary';
@@ -14,6 +16,8 @@ import Settings from './components/Settings';
 import TicketSimulator from './components/TicketSimulator';
 import ExamPractice from './components/ExamPractice';
 import LabGuides from './components/LabGuides';
+import StudyPlanner from './components/StudyPlanner';
+import ResumeBuilder from './components/ResumeBuilder';
 
 const STARTER_SCRIPTS = [
   {
@@ -413,8 +417,16 @@ const STARTER_COURSES = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('chat');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [linkCourseId, setLinkCourseId] = useState(null);
+  const [linkLessonId, setLinkLessonId] = useState(null);
+
+  const handleLinkToLesson = (courseId, lessonId) => {
+    setLinkCourseId(courseId);
+    setLinkLessonId(lessonId);
+    setActiveTab('roadmap');
+  };
 
   // Load Settings from LocalStorage
   const [settings, setSettings] = useState(() => {
@@ -557,6 +569,7 @@ export default function App() {
   };
 
   const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'chat', label: 'AI Chat', icon: Bot },
     { id: 'tickets', label: 'Ticket Simulator', icon: Inbox },
     { id: 'quizzes', label: 'Exam Practice', icon: ClipboardList },
@@ -565,7 +578,9 @@ export default function App() {
     { id: 'powershell', label: 'PowerShell Library', icon: Terminal },
     { id: 'interview', label: 'Interview Prep', icon: Award },
     { id: 'roadmap', label: 'Course Roadmap', icon: Cpu },
+    { id: 'planner', label: 'Study Planner', icon: Calendar },
     { id: 'docs', label: 'Doc Generator', icon: FileText },
+    { id: 'resume', label: 'Resume Builder', icon: User },
     { id: 'challenge', label: 'Daily Challenge', icon: Flame },
     { id: 'settings', label: 'Settings', icon: SettingsIcon }
   ];
@@ -693,6 +708,15 @@ export default function App() {
 
         {/* Content Viewport */}
         <main className="flex-1 overflow-y-auto bg-darkBg">
+          {activeTab === 'dashboard' && (
+            <Dashboard 
+              settings={settings}
+              courses={courses}
+              streak={streak}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+              onLinkToLesson={handleLinkToLesson}
+            />
+          )}
           {activeTab === 'chat' && (
             <AIChat 
               settings={settings} 
@@ -727,15 +751,35 @@ export default function App() {
             <InterviewPrep settings={settings} />
           )}
           {activeTab === 'roadmap' && (
-            <CourseRoadmap courses={courses} settings={settings} onUpdateCourse={handleUpdateCourse} />
+            <CourseRoadmap 
+              courses={courses} 
+              settings={settings} 
+              onUpdateCourse={handleUpdateCourse} 
+              linkCourseId={linkCourseId}
+              linkLessonId={linkLessonId}
+              onClearLink={() => {
+                setLinkCourseId(null);
+                setLinkLessonId(null);
+              }}
+            />
+          )}
+          {activeTab === 'planner' && (
+            <StudyPlanner 
+              settings={settings} 
+              onLinkToLesson={handleLinkToLesson} 
+            />
           )}
           {activeTab === 'docs' && (
             <DocGenerator settings={settings} onSaveToKnowledge={handleSaveKnowledgeItem} />
+          )}
+          {activeTab === 'resume' && (
+            <ResumeBuilder settings={settings} />
           )}
           {activeTab === 'challenge' && (
             <DailyChallenge 
               settings={settings} 
               streak={streak} 
+              courses={courses}
               onIncrementStreak={() => setStreak(prev => prev + 1)} 
               onResetStreak={() => setStreak(0)} 
             />

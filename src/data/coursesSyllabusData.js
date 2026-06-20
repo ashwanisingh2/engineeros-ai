@@ -23,7 +23,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.02",
       title: "01.02-ram-slots-and-troubleshooting",
-      name: "RAM Slots and Troubleshooting",
+      name: "RAM Slots And Troubleshooting",
       explainer: `✅ **Definition & Purpose**: RAM is volatile primary storage hosting active code and operating system instructions.
 ✅ **Architecture / Components**: Memory slots, DIMM pins, SPD chips, and dual-channel memory configuration.
 ✅ **Daily Tasks**: Reseating loose RAM modules, running MemTest86 diagnostic scans, and checking memory speeds.
@@ -53,7 +53,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.04",
       title: "01.04-power-supply-units-psu",
-      name: "Power Supply Units (PSU)",
+      name: "Power Supply Units PSU",
       explainer: `✅ **Definition & Purpose**: Converts AC power from the wall outlet into regulated DC power (3.3V, 5V, 12V) for PC components.
 ✅ **Architecture / Components**: ATX 24-pin power connector, 8-pin EPS, PCIe power rails, and active/passive cooling.
 ✅ **Daily Tasks**: Verifying PSU voltage outputs using a multimeter, estimating total system wattage, and cleaning dust.
@@ -68,7 +68,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.05",
       title: "01.05-storage-drives-hdd-ssd-nvme",
-      name: "Storage Types: HDD, SSD, NVMe",
+      name: "Storage Drives HDD SSD NVMe",
       explainer: `✅ **Definition & Purpose**: Non-volatile storage devices designed to store operational and user data permanently.
 ✅ **Architecture / Components**: HDD (Platters, Actuator Arm, SATA), SATA SSD (NAND Flash, Controller), NVMe SSD (M.2, PCIe bus).
 ✅ **Daily Tasks**: Checking drive health via S.M.A.R.T attributes, monitoring IOPS performance, and setting up storage pools.
@@ -83,7 +83,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.06",
       title: "01.06-bios-uefi-configuration",
-      name: "BIOS vs UEFI Settings",
+      name: "BIOS UEFI Configuration",
       explainer: `✅ **Definition & Purpose**: Firmware interface that initializes system hardware components before booting the OS loader.
 ✅ **Architecture / Components**: CMOS chip, Secure Boot keys, TPM modules, Fast Boot, and Boot Order priorities.
 ✅ **Daily Tasks**: Configuring boot order, enabling TPM 2.0 for Windows 11 upgrades, and locking BIOS password.
@@ -98,7 +98,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.07",
       title: "01.07-cooling-systems-thermal-throttling",
-      name: "Cooling and Thermal Throttling",
+      name: "Cooling Systems Thermal Throttling",
       explainer: `✅ **Definition & Purpose**: Heat dissipation mechanisms to prevent hardware damage from thermal buildup.
 ✅ **Architecture / Components**: Heatsinks, heat pipes, thermal paste, case fans, AIO liquid pumps.
 ✅ **Daily Tasks**: Cleaning dust from radiator fins, replacing fans, and adjusting BIOS fan curves.
@@ -113,7 +113,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.08",
       title: "01.08-pc-post-diagnostic-beeps",
-      name: "POST and Beep Codes",
+      name: "PC POST Diagnostic Beeps",
       explainer: `✅ **Definition & Purpose**: Power-On Self-Test (POST) runs preliminary firmware checks on critical hardware (CPU, RAM, GPU, BIOS).
 ✅ **Architecture / Components**: Motherboard POST speaker, debug LEDs, and 2-digit POST code diagnostic cards.
 ✅ **Daily Tasks**: Decoding motherboard vendor manuals, using diagnostic POST cards, and resolving core component failures.
@@ -128,7 +128,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "01.09",
       title: "01.09-peripheral-interfaces-expansion-slots",
-      name: "Peripheral Interfaces & Expansion",
+      name: "Peripheral Interfaces Expansion Slots",
       explainer: `✅ **Definition & Purpose**: I/O protocols and physical slots allowing connection of external and internal expansion hardware.
 ✅ **Architecture / Components**: PCIe lanes (x1, x4, x8, x16), USB 3.2, USB-C Alt Mode, Thunderbolt, and hardware drivers.
 ✅ **Daily Tasks**: Installing network cards, assigning driver packages, and optimizing PCIe bandwidth allocations.
@@ -147,7 +147,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.01",
       title: "02.01-osi-model-layers",
-      name: "OSI Model Layers & PDU",
+      name: "OSI Model Layers",
       explainer: `✅ **Definition & Purpose**: Standard reference framework dividing network operations into 7 logical layers for interoperability.
 ✅ **Architecture / Components**: Layers 1-7: Physical, Data Link, Network, Transport, Session, Presentation, Application.
 ✅ **Daily Tasks**: Debugging hardware link layers, analyzing packet caps in Wireshark, and configuring router gateways.
@@ -162,7 +162,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.02",
       title: "02.02-ipv4-subnetting-basics",
-      name: "IPv4 Subnetting & VLSM",
+      name: "IPv4 Subnetting Basics",
       explainer: `✅ **Definition & Purpose**: Logical segmentation of IPv4 addresses into subnets to conserve IPs and optimize broadcast domains.
 ✅ **Architecture / Components**: Netmask, Network ID, Broadcast ID, Host range, CIDR notation (/24, /29, etc.).
 ✅ **Daily Tasks**: Allocating subnet IP ranges for new office departments and configuring static DHCP reservations.
@@ -177,7 +177,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.03",
       title: "02.03-vlans-and-routing",
-      name: "VLANs & Inter-VLAN Routing",
+      name: "VLANs And Routing",
       explainer: `✅ **Definition & Purpose**: Virtual Local Area Networks segment switch ports into separate logical broadcast domains at Layer 2.
 ✅ **Architecture / Components**: Access ports, Trunk ports (802.1Q encapsulation), VLAN IDs (1-4094), Subinterfaces.
 ✅ **Daily Tasks**: Creating VLANs on Cisco switches, assigning access ports, and setting up Trunk links.
@@ -192,7 +192,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.04",
       title: "02.04-routing-protocols-ospf",
-      name: "OSPF Dynamic Routing",
+      name: "Routing Protocols OSPF",
       explainer: `✅ **Definition & Purpose**: Open Shortest Path First is a Link-State routing protocol that dynamically calculates shortest paths across a network.
 ✅ **Architecture / Components**: Area 0 (Backbone), LSA packets, Link State Database (LSDB), Dijkstra Shortest Path First algorithm.
 ✅ **Daily Tasks**: Configuring OSPF areas, adjusting interface costs, and monitoring neighbor relationships.
@@ -207,7 +207,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.05",
       title: "02.05-switching-concepts-stp",
-      name: "Spanning Tree Protocol (STP)",
+      name: "Switching Concepts Stp",
       explainer: `✅ **Definition & Purpose**: Layer 2 protocol designed to prevent loop storms in networks with redundant switch paths.
 ✅ **Architecture / Components**: Root Bridge, Root Ports, Designated Ports, Blocking Ports, Bridge Protocol Data Units (BPDUs).
 ✅ **Daily Tasks**: Configuring primary and secondary root bridges, setting portfast on access ports, and debugging topology changes.
@@ -222,7 +222,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.06",
       title: "02.06-ip-services-dhcp-dns",
-      name: "IP Services: DHCP, DNS, NAT",
+      name: "IP Services DHCP DNS",
       explainer: `✅ **Definition & Purpose**: Network services managing dynamic addressing, host naming, and public-private IP translations.
 ✅ **Architecture / Components**: DHCP (DORA process), DNS (Recursive/Authoritative), NAT (Static, Dynamic, PAT port forwarding).
 ✅ **Daily Tasks**: Configuring DHCP helper addresses (IP helper-address) on router interfaces, adding DNS records, and setting up NAT pools.
@@ -237,7 +237,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.07",
       title: "02.07-access-control-lists-acl",
-      name: "Access Control Lists (ACL)",
+      name: "Access Control Lists ACL",
       explainer: `✅ **Definition & Purpose**: Packet filters used by routers to permit or deny network traffic based on headers.
 ✅ **Architecture / Components**: Standard ACLs (source IP only), Extended ACLs (source/destination IP, port, and protocol), wildcard masks.
 ✅ **Daily Tasks**: Implementing security rules, blocking specific subnets, and checking ACL hit counts.
@@ -252,7 +252,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.08",
       title: "02.08-cisco-ios-cli-commands",
-      name: "Cisco IOS CLI Basics",
+      name: "Cisco Ios CLI Commands",
       explainer: `✅ **Definition & Purpose**: Command Line Interface to inspect and configure Cisco switches and routers.
 ✅ **Architecture / Components**: User EXEC mode (\`>\`), Privileged EXEC mode (\`#\`), Global Configuration mode (\`(config)#\`).
 ✅ **Daily Tasks**: Saving running configs, checking interface statistics, and backing up configurations via TFTP.
@@ -267,7 +267,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.09",
       title: "02.09-wireless-networking-wlan",
-      name: "Wireless Networking (WLAN)",
+      name: "Wireless Networking WLAN",
       explainer: `✅ **Definition & Purpose**: Wireless Local Area Networks provide network connectivity using radio frequency signals instead of cables.
 ✅ **Architecture / Components**: Access Points (APs), Wireless LAN Controllers (WLCs), SSIDs, WPA2/WPA3 security standards.
 ✅ **Daily Tasks**: Provisioning wireless SSIDs on WLC interfaces, mapping VLANs, and analyzing RF channel interference.
@@ -282,7 +282,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.10",
       title: "02.10-network-security-basics",
-      name: "Network Security: Port Security & DAI",
+      name: "Network Security Basics",
       explainer: `✅ **Definition & Purpose**: Device-level security configurations protecting switchports and L2 frames from spoofing/flooding.
 ✅ **Architecture / Components**: Port Security, Dynamic ARP Inspection (DAI), DHCP Snooping, MAC Limiting.
 ✅ **Daily Tasks**: Configuring sticky MAC addresses, managing err-disabled ports, and enabling DHCP snooping databases.
@@ -297,7 +297,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "02.11",
       title: "02.11-automation-sdn-architecture",
-      name: "SDN & Network Automation",
+      name: "Automation Sdn Architecture",
       explainer: `✅ **Definition & Purpose**: Software-Defined Networking separates the Control Plane from the Data Plane to enable API management.
 ✅ **Architecture / Components**: Control Plane, Data Plane, southbound APIs (OpenFlow, NETCONF), northbound APIs (REST).
 ✅ **Daily Tasks**: Running Python scripts using Netmiko/Napalm, querying Cisco DNA Center APIs, and analyzing JSON payloads.
@@ -316,7 +316,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.01",
       title: "03.01-windows-server-installation",
-      name: "Server Installation & Core",
+      name: "Windows Server Installation",
       explainer: `✅ **Definition & Purpose**: Deployment of Windows Server 2022. Server Core is the default headless installation option.
 ✅ **Architecture / Components**: Server Core (command-line, tiny footprint) and Desktop Experience (GUI-based shell).
 ✅ **Daily Tasks**: Configuring IP addresses via Sconfig, patching server kernels, and managing features via PowerShell.
@@ -331,7 +331,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.02",
       title: "03.02-active-directory-forests",
-      name: "Active Directory Architecture",
+      name: "Active Directory Forests",
       explainer: `✅ **Definition & Purpose**: Directory service storing data about user accounts, computers, groups, and security permissions.
 ✅ **Architecture / Components**: Forests (security boundary), Trees, Domains, Organizational Units (OUs), Schema, global catalog.
 ✅ **Daily Tasks**: Creating OUs, joining servers to domains, and setting up nested AD security groups.
@@ -346,7 +346,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.03",
       title: "03.03-gpo-gpupdate-gpresult",
-      name: "Group Policy Management",
+      name: "GPO Gpupdate Gpresult",
       explainer: `✅ **Definition & Purpose**: Engine to centrally configure registry settings across domain computers and user environments.
 ✅ **Architecture / Components**: Group Policy Objects (GPOs), GPO links, WMI filters, Security Filtering, SYSVOL folder.
 ✅ **Daily Tasks**: Deploying software, enforcing password complexity, mapping drives, and generating GPO results.
@@ -361,7 +361,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.04",
       title: "03.04-dns-zone-replication",
-      name: "DNS Zone Replication & AD DS",
+      name: "DNS Zone Replication",
       explainer: `✅ **Definition & Purpose**: Windows DNS role translates hostnames to IPs. AD-Integrated zones store records directly in AD DS database.
 ✅ **Architecture / Components**: Forward/Reverse lookup zones, Primary/Secondary zones, Active Directory-Integrated replication.
 ✅ **Daily Tasks**: Creating host (A) records, alias (CNAME) records, and configuring DNS forwarding pools.
@@ -376,7 +376,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.05",
       title: "03.05-dhcp-failover-scopes",
-      name: "DHCP Scopes & High Availability",
+      name: "DHCP Failover Scopes",
       explainer: `✅ **Definition & Purpose**: Automatic allocation of network configurations to clients. Failover ensures service continuity.
 ✅ **Architecture / Components**: DHCP Scopes, Address Leases, Reservations, Load Balance/Hot Standby failover modes.
 ✅ **Daily Tasks**: Creating scopes, adding dynamic range exclusions, and pairing failover servers.
@@ -391,7 +391,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.06",
       title: "03.06-file-servers-ntfs-share",
-      name: "NTFS and Share Permissions",
+      name: "File Servers Ntfs Share",
       explainer: `✅ **Definition & Purpose**: Setting file-level (NTFS) and folder-level (Share) access permissions to secure files on the network.
 ✅ **Architecture / Components**: NTFS Permissions (Read, Write, Modify, Full Control), Share Permissions, Access-Based Enumeration (ABE).
 ✅ **Daily Tasks**: Provisioning department file shares, restoring shadow copies, and resolving access blocked tickets.
@@ -406,7 +406,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.07",
       title: "03.07-storage-replica-spaces",
-      name: "Storage Spaces & Replication",
+      name: "Storage Replica Spaces",
       explainer: `✅ **Definition & Purpose**: Software-defined storage solution virtualization and block-level replication between servers.
 ✅ **Architecture / Components**: Storage Pools, Virtual Disks, Storage Spaces Direct (S2D), Synchronous vs Asynchronous replication.
 ✅ **Daily Tasks**: Adding physical disks to storage pools, monitoring replication sync health, and handling disk failures.
@@ -421,7 +421,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.08",
       title: "03.08-hyper-v-virtualization",
-      name: "Hyper-V Virtualization",
+      name: "Hyper V Virtualization",
       explainer: `✅ **Definition & Purpose**: Windows built-in Type-1 hypervisor allowing virtualization of operating systems on physical hardware.
 ✅ **Architecture / Components**: Hypervisor, Integration Services, Virtual Switches (External, Internal, Private), VHD/VHDX disk formats.
 ✅ **Daily Tasks**: Creating VMs, configuring virtual networking, provisioning memory, and exporting VM templates.
@@ -436,7 +436,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.09",
       title: "03.09-iis-web-servers",
-      name: "IIS Web Servers & Certificates",
+      name: "IIS Web Servers",
       explainer: `✅ **Definition & Purpose**: Internet Information Services is the web server engine built into Windows Server.
 ✅ **Architecture / Components**: Application Pools, Web Sites, Bindings, SSL/TLS configuration, HTTPS certificates.
 ✅ **Daily Tasks**: Creating web sites, configuring HTTP-to-HTTPS redirect rules, and importing SSL certificates.
@@ -481,7 +481,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.12",
       title: "03.12-windows-admin-center",
-      name: "Windows Admin Center (WAC)",
+      name: "Windows Admin Center",
       explainer: `✅ **Definition & Purpose**: Modern, browser-based management tool for remote Windows servers, clusters, and hyper-converged infrastructure.
 ✅ **Architecture / Components**: WAC gateway, web console, PowerShell extension modules, WinRM remote execution.
 ✅ **Daily Tasks**: Inspecting event logs remotely, managing virtual switches, checking performance graphs, and running terminal shells.
@@ -511,7 +511,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.14",
       title: "03.14-fsmo-roles-seizure",
-      name: "FSMO Roles Management",
+      name: "Fsmo Roles Seizure",
       explainer: `✅ **Definition & Purpose**: Flexible Single Master Operations are 5 critical single-instance roles responsible for AD consistency.
 ✅ **Architecture / Components**: Forest-level (Schema Master, Domain Naming Master), Domain-level (PDC Emulator, RID Master, Infrastructure Master).
 ✅ **Daily Tasks**: Inspecting FSMO role holders, transferring roles during migrations, and seizing roles during domain controller failures.
@@ -526,7 +526,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.15",
       title: "03.15-remote-desktop-services-rds",
-      name: "Remote Desktop Services (RDS)",
+      name: "Remote Desktop Services RDS",
       explainer: `✅ **Definition & Purpose**: Multi-session environment allowing users to run remote desktops and applications hosted on Windows servers.
 ✅ **Architecture / Components**: RD Session Host, RD Connection Broker, RD Gateway, RD Web Access, RD Licensing.
 ✅ **Daily Tasks**: Configuring user profiles, mapping TS CAL licenses, logging off disconnected sessions, and checking broker databases.
@@ -541,7 +541,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.16",
       title: "03.16-server-backup-disaster-recovery",
-      name: "Backup & Disaster Recovery",
+      name: "Server Backup Disaster Recovery",
       explainer: `✅ **Definition & Purpose**: Creating restorable copies of server files, volumes, and Bare Metal Recovery (BMR) states.
 ✅ **Architecture / Components**: Windows Server Backup (WSB), Volume Shadow Copy Service (VSS), Bare Metal Recovery (system state + boot data).
 ✅ **Daily Tasks**: Scheduling daily backups, reviewing job success logs, and executing test restoration drills.
@@ -556,7 +556,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "03.17",
       title: "03.17-event-viewer-log-forwarding",
-      name: "Event Logging & Forwarding",
+      name: "Event Viewer Log Forwarding",
       explainer: `✅ **Definition & Purpose**: Centrally collecting Event logs (Security, Application, System) from multiple servers onto a single collector.
 ✅ **Architecture / Components**: Event Viewer, Windows Event Forwarding (WEF), WS-Management (WinRM), Source/Collector initiated subscriptions.
 ✅ **Daily Tasks**: Setting up event subscriptions, configuring GPO log forwarding targets, and analyzing security events.
@@ -590,7 +590,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.01",
       title: "04.01-linux-permissions-chmod",
-      name: "File Permissions & ACLs",
+      name: "Linux Permissions Chmod",
       explainer: `✅ **Definition & Purpose**: Enforces access security on directories and files. ACLs allow granular access control rules.
 ✅ **Architecture / Components**: Permission bits (Read: 4, Write: 2, Execute: 1), User-Group-Others (UGO), Special permissions (SUID, SGID, Sticky), Access Control Lists (ACLs).
 ✅ **Daily Tasks**: Correcting file ownerships, adjusting user write permissions, and setting up shared project directories.
@@ -605,7 +605,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.02",
       title: "04.02-logical-volume-manager",
-      name: "Logical Volume Management",
+      name: "Logical Volume Manager",
       explainer: `✅ **Definition & Purpose**: Flexible disk management solution allowing hot-resizing and volume pooling.
 ✅ **Architecture / Components**: Physical Volumes (PV), Volume Groups (VG), Logical Volumes (LV), Filesystems (XFS, Ext4).
 ✅ **Daily Tasks**: Initializing new disks, extending volume groups, expanding filesystems, and creating snapshot volumes.
@@ -620,7 +620,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.03",
       title: "04.03-systemd-service-management",
-      name: "systemd Service Management",
+      name: "Systemd Service Management",
       explainer: `✅ **Definition & Purpose**: The systemd system and service manager controls startup services and daemons.
 ✅ **Architecture / Components**: Unit files (.service, .target, .timer), systemctl control utility, journald logging daemon.
 ✅ **Daily Tasks**: Restarting services, enabling startup daemons, reviewing log outputs using journalctl, and masking problematic services.
@@ -635,7 +635,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.04",
       title: "04.04-linux-boot-troubleshooting",
-      name: "Boot Troubleshooting & Root Reset",
+      name: "Linux Boot Troubleshooting",
       explainer: `✅ **Definition & Purpose**: Diagnosing GRUB2 boot failures and resetting lost root passwords using low-level debug shells.
 ✅ **Architecture / Components**: UEFI/GRUB2 bootloader, kernel parameters, rd.break RAM disk shell, SELinux autorelabel.
 ✅ **Daily Tasks**: Modifying kernel command lines, accessing emergency shells, and rebuilding GRUB configurations.
@@ -650,7 +650,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.05",
       title: "04.05-package-management-dnf-yum",
-      name: "Package Management & Repos",
+      name: "Package Management Dnf Yum",
       explainer: `✅ **Definition & Purpose**: Installs, updates, and deletes system software using packages and dependency engines.
 ✅ **Architecture / Components**: RPM packages, DNF/YUM repositories, metadata cache, GPG security signatures.
 ✅ **Daily Tasks**: Configuring repo files in /etc/yum.repos.d/, installing patches, and removing unused packages.
@@ -665,7 +665,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.06",
       title: "04.06-cron-jobs-at-scheduling",
-      name: "Task Scheduling: cron & at",
+      name: "Cron Jobs At Scheduling",
       explainer: `✅ **Definition & Purpose**: Automated execution of scripts and commands at specific times or recurring intervals.
 ✅ **Architecture / Components**: Crontab fields (Min Hour Day Month Weekday), cron.d, systemd timers, 'at' daemon.
 ✅ **Daily Tasks**: Setting up log rotation schedules, scheduling database backups, and checking cron logs.
@@ -680,7 +680,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.07",
       title: "04.07-linux-firewalld-selinux",
-      name: "Security: firewalld & SELinux",
+      name: "Linux Firewalld Selinux",
       explainer: `✅ **Definition & Purpose**: Linux firewall rules and Mandatory Access Control (MAC) system protecting kernel objects.
 ✅ **Architecture / Components**: Firewalld zones, permanent vs runtime rules, SELinux enforcement modes (Enforcing, Permissive, Disabled), contexts (User:Role:Type).
 ✅ **Daily Tasks**: Opening firewall ports, changing SELinux file contexts, and reviewing AVC denial logs.
@@ -695,7 +695,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.08",
       title: "04.08-user-group-management",
-      name: "User and Group Management",
+      name: "User Group Management",
       explainer: `✅ **Definition & Purpose**: Creating and securing user identity databases and group permissions on Linux servers.
 ✅ **Architecture / Components**: /etc/passwd (user attributes), /etc/shadow (hashed passwords), /etc/group (group listings).
 ✅ **Daily Tasks**: Creating users, configuring password aging limits, adding users to wheel/sudo groups, and locking accounts.
@@ -710,7 +710,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.09",
       title: "04.09-networking-nmcli-nmtui",
-      name: "Network Configuration",
+      name: "Networking Nmcli Nmtui",
       explainer: `✅ **Definition & Purpose**: Managing network interface profiles, static IPs, default gateways, and hostname settings.
 ✅ **Architecture / Components**: NetworkManager daemon, nmcli CLI tool, nmtui GUI, configuration files (/etc/NetworkManager/).
 ✅ **Daily Tasks**: Configuring static IP addresses, bringing interfaces up/down, and configuring local hostname resolution.
@@ -725,7 +725,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.10",
       title: "04.10-ssh-key-authentication",
-      name: "Secure SSH Configuration",
+      name: "SSH Key Authentication",
       explainer: `✅ **Definition & Purpose**: Secure, encrypted remote command line access using SSH key pairs instead of passwords.
 ✅ **Architecture / Components**: SSH daemon (sshd), public/private key pairs, ~/.ssh/authorized_keys file, config port.
 ✅ **Daily Tasks**: Generating SSH key pairs, deploying public keys to servers, disabling password logins, and changing ports.
@@ -740,7 +740,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.11",
       title: "04.11-storage-stratis-vdo",
-      name: "Stratis Storage & VDO",
+      name: "Storage Stratis Vdo",
       explainer: `✅ **Definition & Purpose**: Modern storage architectures. Stratis is software-managed pools; VDO provides data deduplication/compression.
 ✅ **Architecture / Components**: Stratis daemon, blockdev pools, Virtual Data Optimizer kernel modules.
 ✅ **Daily Tasks**: Creating Stratis storage pools, mounting Stratis filesystems, and enabling VDO compression.
@@ -755,7 +755,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "04.12",
       title: "04.12-shell-scripting-bash",
-      name: "Bash Shell Scripting",
+      name: "Shell Scripting Bash",
       explainer: `✅ **Definition & Purpose**: Automation of administrative tasks by executing sequential command scripts in the bash interpreter.
 ✅ **Architecture / Components**: Shebang line (\`#!/bin/bash\`), variables, arguments ($1, $2), exit codes, conditional checks, loops.
 ✅ **Daily Tasks**: Writing server health check scripts, parsing log files, automating backups, and processing user input.
@@ -774,7 +774,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.01",
       title: "05.01-type1-vs-type2-hypervisors",
-      name: "Hypervisor Classification",
+      name: "Type1 Vs Type2 Hypervisors",
       explainer: `✅ **Definition & Purpose**: Virtualization hypervisors abstract physical hardware resources into virtual hardware allocations.
 ✅ **Architecture / Components**: Type 1 (Bare-Metal, runs directly on hardware), Type 2 (Hosted, runs on host OS).
 ✅ **Daily Tasks**: Installing virtualization software, sizing hardware allocations, and checking system virtualization settings in BIOS.
@@ -789,7 +789,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.02",
       title: "05.02-vmware-esxi-installation",
-      name: "VMware ESXi Host Administration",
+      name: "Vmware Esxi Installation",
       explainer: `✅ **Definition & Purpose**: Installation and management of VMware ESXi, the enterprise bare-metal hypervisor.
 ✅ **Architecture / Components**: VMkernel, Direct Console User Interface (DCUI), Host Client web portal, local datastores.
 ✅ **Daily Tasks**: Configuring management IP address in DCUI, creating local VMFS datastores, and monitoring server resource pools.
@@ -804,7 +804,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.03",
       title: "05.03-vmware-vcenter-clustering",
-      name: "vCenter Clustering & vMotion",
+      name: "Vmware Vcenter Clustering",
       explainer: `✅ **Definition & Purpose**: Centralized administration platform for VMware vSphere environments, enabling HA and load balancing.
 ✅ **Architecture / Components**: vCenter Server Appliance (VCSA), vMotion (live migration), HA (High Availability), DRS (Distributed Resource Scheduler).
 ✅ **Daily Tasks**: Adding ESXi hosts to clusters, migrating VMs between hosts, and configuring HA failure rules.
@@ -819,7 +819,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.04",
       title: "05.04-virtualbox-networking",
-      name: "VirtualBox Network Modes",
+      name: "Virtualbox Networking",
       explainer: `✅ **Definition & Purpose**: Configuration of virtual network adapters in VirtualBox to control VM network boundaries.
 ✅ **Architecture / Components**: NAT (default, outbound only), Bridged (direct physical access), Host-Only (isolated private host-VM loopback).
 ✅ **Daily Tasks**: Creating isolated laboratory environments, assigning static IPs, and troubleshooting VM connection drops.
@@ -834,7 +834,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.05",
       title: "05.05-virtual-disk-types-thick-thin",
-      name: "Thick vs Thin Provisioning",
+      name: "Virtual Disk Types Thick Thin",
       explainer: `✅ **Definition & Purpose**: Allocation methods for virtual hard disk files (VMDK, VHDX) on host datastores.
 ✅ **Architecture / Components**: Thin Provisioning (grow on demand), Thick Provisioning Lazy Zeroed, Thick Provisioning Eager Zeroed.
 ✅ **Daily Tasks**: Monitoring datastore storage space, allocating virtual disks, and converting disk formats.
@@ -849,7 +849,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "05.06",
       title: "05.06-vm-snapshots-backups",
-      name: "VM Snapshots & Performance",
+      name: "VM Snapshots Backups",
       explainer: `✅ **Definition & Purpose**: Capturing the current state, memory, and disk changes of a VM at a specific point in time.
 ✅ **Architecture / Components**: Delta disk files, snapshot hierarchy trees, snapshot consolidate action.
 ✅ **Daily Tasks**: Creating snapshots before software upgrades, merging snapshots after verification, and verifying storage health.
@@ -868,7 +868,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.01",
       title: "06.01-powershell-cmdlets",
-      name: "Cmdlets & Pipeline Basics",
+      name: "Powershell Cmdlets",
       explainer: `✅ **Definition & Purpose**: Command-line shell and scripting language built on the .NET framework to automate administration.
 ✅ **Architecture / Components**: Verb-Noun cmdlets, objects (properties/methods), pipeline operator (\`|\`), execution policies.
 ✅ **Daily Tasks**: Interrogating system configurations, exporting reports to CSV, and managing remote systems.
@@ -883,7 +883,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.02",
       title: "06.02-variables-and-data-types",
-      name: "Variables & Data Collections",
+      name: "Variables And Data Types",
       explainer: `✅ **Definition & Purpose**: Storing and manipulating data strings, numbers, arrays, and associative lists in script execution.
 ✅ **Architecture / Components**: Variables (\`$\`), arrays (\`@()\`), hash tables (\`@{ }\`), custom PowerShell objects (\`[PSCustomObject]\`).
 ✅ **Daily Tasks**: Collecting user input, forming query loops, and building custom report structures.
@@ -898,7 +898,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.03",
       title: "06.03-conditionals-and-loops",
-      name: "Logic Control & Loops",
+      name: "Conditionals And Loops",
       explainer: `✅ **Definition & Purpose**: Directing code execution path flow based on conditions and automating repeating tasks.
 ✅ **Architecture / Components**: Operators (\`-eq\`, \`-ne\`, \`-gt\`, \`-like\`), If/Else, Switch, For, ForEach loops.
 ✅ **Daily Tasks**: Iterating over lists of user accounts, checking server ping status, and executing logic gates.
@@ -913,7 +913,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.04",
       title: "06.04-functions-and-modules",
-      name: "Functions & Script Modules",
+      name: "Functions And Modules",
       explainer: `✅ **Definition & Purpose**: Grouping reusable blocks of code into named commands, packaged inside module files (.psm1).
 ✅ **Architecture / Components**: Function block, parameters (\`param()\`), CmdletBinding validation, manifest files (.psd1).
 ✅ **Daily Tasks**: Creating custom deployment scripts, validating parameter arguments, and importing helper modules.
@@ -928,7 +928,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.05",
       title: "06.05-powershell-remoting-pssession",
-      name: "WinRM & PowerShell Remoting",
+      name: "Powershell Remoting Pssession",
       explainer: `✅ **Definition & Purpose**: Executing administrative commands on remote servers using WS-Management protocols.
 ✅ **Architecture / Components**: WinRM service, ports 5985 (HTTP) and 5986 (HTTPS), PSSessions, Invoke-Command.
 ✅ **Daily Tasks**: Running system updates on multiple remote servers, initiating remote interactive shells, and setting up WinRM.
@@ -943,7 +943,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.06",
       title: "06.06-error-handling-try-catch",
-      name: "Error Handling & Debugging",
+      name: "Error Handling Try Catch",
       explainer: `✅ **Definition & Purpose**: Catching errors and exceptions to prevent scripts from crashing and handling execution failures.
 ✅ **Architecture / Components**: Try/Catch/Finally blocks, ErrorAction parameters, \`$Error\` automatic variable, throw command.
 ✅ **Daily Tasks**: Logging script failures, suppressing non-critical warnings, and setting up break points.
@@ -958,7 +958,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "06.07",
       title: "06.07-wmi-cim-querying",
-      name: "WMI & CIM System Queries",
+      name: "Wmi Cim Querying",
       explainer: `✅ **Definition & Purpose**: Interrogating operating system resources and hardware namespaces using CIM/WMI repositories.
 ✅ **Architecture / Components**: WMI repository, CIM classes (e.g. Win32_LogicalDisk, Win32_OperatingSystem), WQL query language.
 ✅ **Daily Tasks**: Gathering system serial numbers, checking OS patches, listing network adapters, and querying BIOS version.
@@ -992,7 +992,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.01",
       title: "07.01-tenant-initialization",
-      name: "Tenant Setup & DNS",
+      name: "Tenant Initialization",
       explainer: `✅ **Definition & Purpose**: Configuring a new Microsoft 365 tenant boundary and mapping vanity domains.
 ✅ **Architecture / Components**: M365 Admin Portal, Custom domains, DNS records (MX, TXT, CNAME, SRV).
 ✅ **Daily Tasks**: Verifying custom domains, setting up MX routing, and configuring SPF/TXT records for security.
@@ -1007,7 +1007,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.02",
       title: "07.02-entra-id-identity",
-      name: "Entra ID Identity & Groups",
+      name: "Entra Id Identity",
       explainer: `✅ **Definition & Purpose**: Identity and access management cloud database (formerly Azure AD) for M365 services.
 ✅ **Architecture / Components**: User accounts, Administrative Units (AUs), Security groups, M365 groups, Dynamic groups.
 ✅ **Daily Tasks**: Provisioning users, configuring group memberships, assigning product licenses, and auditing logins.
@@ -1022,7 +1022,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.03",
       title: "07.03-hybrid-identity-entra-connect",
-      name: "Entra Cloud Sync",
+      name: "Hybrid Identity Entra Connect",
       explainer: `✅ **Definition & Purpose**: Synchronizing local Active Directory DS objects to the cloud Entra ID database.
 ✅ **Architecture / Components**: Entra Connect server, SQL database, Synchronization Service, Password Hash Sync (PHS), Pass-Through Authentication (PTA).
 ✅ **Daily Tasks**: Monitoring sync engine status, running manual delta synchronizations, and resolving sync conflicts.
@@ -1037,7 +1037,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.04",
       title: "07.04-multi-factor-authentication",
-      name: "MFA & Conditional Access",
+      name: "Multi Factor Authentication",
       explainer: `✅ **Definition & Purpose**: Enforcing multi-factor authentication requirements based on specific access criteria.
 ✅ **Architecture / Components**: Entra ID Protection, Conditional Access (CA) policies, Authenticator App, Security Defaults.
 ✅ **Daily Tasks**: Configuring CA policies, resetting user MFA registration states, and inspecting risky sign-in logs.
@@ -1052,7 +1052,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.05",
       title: "07.05-exchange-online-administration",
-      name: "Exchange Online Admin",
+      name: "Exchange Online Administration",
       explainer: `✅ **Definition & Purpose**: Cloud email administration platform hosting mailboxes, mail flows, and anti-spam protocols.
 ✅ **Architecture / Components**: Exchange Admin Center (EAC), Mailboxes, Shared Mailboxes, Mail Flow Rules, DKIM, DMARC.
 ✅ **Daily Tasks**: Provisioning shared mailboxes, restoring deleted emails, adjusting size limits, and tracing lost emails.
@@ -1067,7 +1067,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.06",
       title: "07.06-sharepoint-onedrive-sharing",
-      name: "SharePoint & OneDrive Sharing",
+      name: "Sharepoint Onedrive Sharing",
       explainer: `✅ **Definition & Purpose**: Cloud content storage and collaboration sites. OneDrive is personal files; SharePoint is team directories.
 ✅ **Architecture / Components**: SharePoint Admin Center, Document Libraries, Site Collections, External Sharing settings.
 ✅ **Daily Tasks**: Provisioning team sites, setting external link expiration dates, and recovering deleted document trees.
@@ -1082,7 +1082,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.07",
       title: "07.07-microsoft-teams-governance",
-      name: "Teams Policies & Access",
+      name: "Microsoft Teams Governance",
       explainer: `✅ **Definition & Purpose**: Unified communications platform. Governance manages guest access, messaging, and meeting behavior.
 ✅ **Architecture / Components**: Teams Admin Center, Messaging Policies, App Permission Policies, Guest Access, External Access (Federation).
 ✅ **Daily Tasks**: Creating messaging policies, blocking specific app integrations, and configuring external domain federation.
@@ -1097,7 +1097,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.08",
       title: "07.08-role-based-access-control",
-      name: "RBAC & Privileged Identity",
+      name: "Role Based Access Control",
       explainer: `✅ **Definition & Purpose**: Restricting admin access by assigning specific roles. PIM allows just-in-time role activations.
 ✅ **Architecture / Components**: Global Administrator, Helpdesk Administrator, Privileged Identity Management (PIM), Activation approvals.
 ✅ **Daily Tasks**: Creating custom roles, configuring PIM activation rules, and auditing active administrator assignments.
@@ -1112,7 +1112,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.09",
       title: "07.09-data-loss-prevention",
-      name: "Data Loss Prevention (DLP)",
+      name: "Data Loss Prevention",
       explainer: `✅ **Definition & Purpose**: Compliance framework designed to identify, monitor, and protect sensitive data in M365 systems.
 ✅ **Architecture / Components**: DLP policies, Sensitive Information Types (SIT), policy tips, email encryption actions.
 ✅ **Daily Tasks**: Creating DLP rules, auditing incident match reports, and adjusting policy sensitivity levels.
@@ -1127,7 +1127,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.10",
       title: "07.10-purview-e-discovery",
-      name: "eDiscovery & Retention",
+      name: "Purview E Discovery",
       explainer: `✅ **Definition & Purpose**: Legal search engine and data protection rules to retain files and investigate data content.
 ✅ **Architecture / Components**: Legal Hold, Content Search, eDiscovery cases, Retention policies, Retention labels.
 ✅ **Daily Tasks**: Creating retention rules, executing content searches for legal audits, and putting mailboxes on Hold.
@@ -1142,7 +1142,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.11",
       title: "07.11-defender-for-office365",
-      name: "Defender for Office 365",
+      name: "Defender For Office365",
       explainer: `✅ **Definition & Purpose**: Cloud email and collaboration security protecting against malware, phishing, and link exploits.
 ✅ **Architecture / Components**: Safe Attachments (sandbox detonation), Safe Links (URL rewrite), anti-phishing policies.
 ✅ **Daily Tasks**: Reviewing quarantined emails, analyzing phishing simulation success rates, and adjusting security levels.
@@ -1157,7 +1157,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.12",
       title: "07.12-tenant-health-monitoring",
-      name: "Monitoring & Audit Logs",
+      name: "Tenant Health Monitoring",
       explainer: `✅ **Definition & Purpose**: Tracking service availability and auditing administrator and user actions across M365.
 ✅ **Architecture / Components**: Service Health dashboard, Unified Audit Log (UAL), usage reports, active alert systems.
 ✅ **Daily Tasks**: Reviewing service outage reports, searching audit logs for bulk file downloads, and configuring alerts.
@@ -1172,7 +1172,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "07.13",
       title: "07.13-m365-licensing-optimization",
-      name: "M365 License Optimization",
+      name: "M365 Licensing Optimization",
       explainer: `✅ **Definition & Purpose**: Management of subscription pools, license allocation audits, and cost reduction tasks.
 ✅ **Architecture / Components**: Billing portal, billing cycles, license pools (E3, E5, F3, Business Premium).
 ✅ **Daily Tasks**: Reclaiming unused licenses, resolving assignment conflicts, and auditing guest user footprint.
@@ -1191,7 +1191,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.01",
       title: "08.01-cloud-computing-benefits",
-      name: "Cloud Benefits & Concepts",
+      name: "Cloud Computing Benefits",
       explainer: `✅ **Definition & Purpose**: Introduction to cloud computing paradigm. Benefits define cloud architecture advantages.
 ✅ **Architecture / Components**: High Availability, Scalability (Vertical/Horizontal), Elasticity, Agility, Disaster Recovery, CapEx vs OpEx.
 ✅ **Daily Tasks**: Sizing cloud deployments, reviewing infrastructure redundancy, and auditing cost budgets.
@@ -1206,7 +1206,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.02",
       title: "08.02-laas-paas-saas-models",
-      name: "Cloud Service Models",
+      name: "Laas Paas Saas Models",
       explainer: `✅ **Definition & Purpose**: Classification of cloud service types defining host control and management boundaries.
 ✅ **Architecture / Components**: IaaS (Infrastructure as a Service), PaaS (Platform as a Service), SaaS (Software as a Service).
 ✅ **Daily Tasks**: Creating VMs (IaaS), configuring databases (PaaS), and provisioning user access to Office 365 (SaaS).
@@ -1221,7 +1221,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.03",
       title: "08.03-azure-architectural-components",
-      name: "Azure Physical Infrastructure",
+      name: "Azure Architectural Components",
       explainer: `✅ **Definition & Purpose**: The global organization structure of Microsoft Azure physical and logical resources.
 ✅ **Architecture / Components**: Regions, Availability Zones (redundant datacenters), Resource Groups, Subscriptions, Management Groups.
 ✅ **Daily Tasks**: Organizing resources into Resource Groups, structuring subscriptions, and assigning regional endpoints.
@@ -1236,7 +1236,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.04",
       title: "08.04-azure-compute-services",
-      name: "Azure Compute Solutions",
+      name: "Azure Compute Services",
       explainer: `✅ **Definition & Purpose**: Cloud computing engines hosting workloads, web apps, and containers on Azure.
 ✅ **Architecture / Components**: Azure VMs, Virtual Machine Scale Sets (VMSS), Azure App Services, Container Instances (ACI), AKS (Kubernetes).
 ✅ **Daily Tasks**: Deploying virtual machines, configuring scale sets, deploying web apps, and running containers.
@@ -1251,7 +1251,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.05",
       title: "08.05-azure-networking-basics",
-      name: "Azure Networking Fundamentals",
+      name: "Azure Networking Basics",
       explainer: `✅ **Definition & Purpose**: Establishing virtual networks in Azure to enable secure communication between resources.
 ✅ **Architecture / Components**: Virtual Networks (VNet), Subnets, Network Security Groups (NSG), VPN Gateways, ExpressRoute.
 ✅ **Daily Tasks**: Configuring subnets, creating NSG inbound security rules, and setting up VNet peering links.
@@ -1281,7 +1281,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.07",
       title: "08.07-azure-database-solutions",
-      name: "Azure Database Services",
+      name: "Azure Database Solutions",
       explainer: `✅ **Definition & Purpose**: Managed database platforms hosting relational and non-relational database structures.
 ✅ **Architecture / Components**: Azure SQL Database, Azure Cosmos DB (NoSQL), Database for PostgreSQL/MySQL, SQL Managed Instance.
 ✅ **Daily Tasks**: Configuring database firewall rules, checking replication status, and adjusting performance tiers.
@@ -1296,7 +1296,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.08",
       title: "08.08-azure-active-directory-entra",
-      name: "Azure AD & Entra ID",
+      name: "Azure Active Directory Entra",
       explainer: `✅ **Definition & Purpose**: Cloud identity provider. Manages user accounts, authentication, and cloud directory domains.
 ✅ **Architecture / Components**: Tenants, Users, Groups, Enterprise Applications, App Registrations, RBAC, Entra ID licenses.
 ✅ **Daily Tasks**: Provisioning users, setting password reset policies, creating enterprise apps, and managing permissions.
@@ -1311,7 +1311,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.09",
       title: "08.09-azure-security-sentinel",
-      name: "Security: Sentinel & Defender",
+      name: "Azure Security Sentinel",
       explainer: `✅ **Definition & Purpose**: Threat protection and security information management solutions on Azure.
 ✅ **Architecture / Components**: Microsoft Defender for Cloud, Microsoft Sentinel (SIEM/SOAR), Azure Key Vault, Network Security Groups.
 ✅ **Daily Tasks**: Checking security recommendations, auditing Key Vault access policies, and investigating Sentinel alert chains.
@@ -1326,7 +1326,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.10",
       title: "08.10-azure-governance-policy",
-      name: "Azure Governance & Policy",
+      name: "Azure Governance Policy",
       explainer: `✅ **Definition & Purpose**: Enforcing corporate standards and compliance rules across all deployed cloud resources.
 ✅ **Architecture / Components**: Azure Policy, Resource Locks (CanNotDelete, ReadOnly), Azure Blueprints, Cost Management.
 ✅ **Daily Tasks**: Deploying compliance policy definitions, configuring resource locks, and tracking monthly spend trends.
@@ -1341,7 +1341,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "08.11",
       title: "08.11-azure-monitoring-advisor",
-      name: "Azure Monitor & Advisor",
+      name: "Azure Monitoring Advisor",
       explainer: `✅ **Definition & Purpose**: Monitoring cloud infrastructure health, metrics, alerts, and cost optimization recommendations.
 ✅ **Architecture / Components**: Azure Monitor, Log Analytics Workspaces, Application Insights, Azure Advisor.
 ✅ **Daily Tasks**: Creating metric alert rules, querying logs using KQL, and implementing Advisor cost recommendations.
@@ -1360,7 +1360,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.01",
       title: "09.01-azure-identity-governance",
-      name: "Identity & Directory Management",
+      name: "Azure Identity Governance",
       explainer: `✅ **Definition & Purpose**: Administration of Azure cloud directory services, domain mappings, and account attributes.
 ✅ **Architecture / Components**: Entra ID Tenants, Custom domains, Self-Service Password Reset (SSPR), Administrative Units.
 ✅ **Daily Tasks**: Configuring SSPR authentication methods, setting up directory syncs, and delegating permissions using Administrative Units.
@@ -1375,7 +1375,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.02",
       title: "09.02-azure-rbac-custom-roles",
-      name: "Azure RBAC & Custom Roles",
+      name: "Azure RBAC Custom Roles",
       explainer: `✅ **Definition & Purpose**: Restricting cloud resource permissions using role assignments at different scopes.
 ✅ **Architecture / Components**: Role Definitions, Assignments, Scopes (Management Group, Subscription, RG, Resource), Custom Roles.
 ✅ **Daily Tasks**: Assigning roles to user groups, creating JSON custom roles, and auditing resource permissions.
@@ -1390,7 +1390,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.03",
       title: "09.03-azure-storage-management",
-      name: "Secure Storage Management",
+      name: "Azure Storage Management",
       explainer: `✅ **Definition & Purpose**: Securing and managing lifecycle storage access, encryption, and keys in Azure storage.
 ✅ **Architecture / Components**: Storage keys, Shared Access Signatures (SAS), Storage Firewalls, Lifecycle management policies.
 ✅ **Daily Tasks**: Rotating access keys, generating scoped SAS tokens, restricting IP access, and setting data archiving policies.
@@ -1405,7 +1405,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.04",
       title: "09.04-azure-vm-deployment-arm",
-      name: "VM Deployments & Bicep",
+      name: "Azure VM Deployment Arm",
       explainer: `✅ **Definition & Purpose**: Automated provisioning of virtual machines using templates and infrastructure as code models.
 ✅ **Architecture / Components**: ARM Templates (JSON), Azure Bicep, Custom Script Extensions, Azure Bastion.
 ✅ **Daily Tasks**: Editing Bicep files, running deployment commands, configuring post-install script extensions, and RDPing via Bastion.
@@ -1420,7 +1420,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.05",
       title: "09.05-azure-virtual-networking",
-      name: "VNet Peering & Security",
+      name: "Azure Virtual Networking",
       explainer: `✅ **Definition & Purpose**: Establishing network routes between virtual networks and controlling traffic flow using NSGs and routes.
 ✅ **Architecture / Components**: VNet Peering, User Defined Routes (UDR), Network Security Groups (NSG), Service Endpoints.
 ✅ **Daily Tasks**: Configuring VNet peering, setting up route tables, creating security rules, and testing inter-VM paths.
@@ -1435,7 +1435,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.06",
       title: "09.06-azure-dns-hybrid",
-      name: "Azure Private DNS & Hybrid Name Resolution",
+      name: "Azure DNS Hybrid",
       explainer: `✅ **Definition & Purpose**: Resolving custom domain names inside private virtual networks without exposing records to the internet.
 ✅ **Architecture / Components**: Azure Private DNS Zones, Virtual Network Links, Auto-registration, DNS Private Resolver.
 ✅ **Daily Tasks**: Creating private DNS zones, linking zones to VNets, enabling auto-registration, and configuring hybrid DNS resolvers.
@@ -1450,7 +1450,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.07",
       title: "09.07-azure-load-balancing",
-      name: "Load Balancer & App Gateway",
+      name: "Azure Load Balancing",
       explainer: `✅ **Definition & Purpose**: Distributing incoming network traffic across a backend pool of virtual machines or endpoints.
 ✅ **Architecture / Components**: Azure Load Balancer (L4, TCP/UDP), Application Gateway (L7, HTTP/HTTPS, SSL termination, WAF), backend pools, health probes.
 ✅ **Daily Tasks**: Configuring load balancing rules, setting up health probes, uploading SSL certs to App Gateway, and configuring WAF rules.
@@ -1465,7 +1465,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.08",
       title: "09.08-azure-backup-recovery",
-      name: "Azure Backup & Site Recovery",
+      name: "Azure Backup Recovery",
       explainer: `✅ **Definition & Purpose**: Cloud backup and disaster recovery solutions protecting virtual machines, file shares, and database workloads.
 ✅ **Architecture / Components**: Recovery Services Vault, Backup Policies, Recovery Points, Azure Site Recovery (replication to secondary regions).
 ✅ **Daily Tasks**: Creating backup policies, monitoring daily job status, performing file-level restores, and running DR replication drills.
@@ -1480,7 +1480,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.09",
       title: "09.09-azure-monitor-alerts",
-      name: "Log Analytics & Alerts",
+      name: "Azure Monitor Alerts",
       explainer: `✅ **Definition & Purpose**: Monitoring cloud infrastructure health, metrics, alerts, and cost optimization recommendations.
 ✅ **Architecture / Components**: Azure Monitor, Log Analytics Workspaces, Application Insights, Azure Advisor.
 ✅ **Daily Tasks**: Creating metric alert rules, querying logs using KQL, and implementing Advisor cost recommendations.
@@ -1495,7 +1495,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.10",
       title: "09.10-azure-app-services",
-      name: "App Service Deployments",
+      name: "Azure App Services",
       explainer: `✅ **Definition & Purpose**: Managed hosting platform for web applications, REST APIs, and mobile backends.
 ✅ **Architecture / Components**: App Service Plans (pricing/compute tier), App Services, Deployment Slots, Custom Domains, SSL bindings.
 ✅ **Daily Tasks**: Creating App Service plans, deploying code packages, configuring deployment slots, swapping slots, and binding SSL certs.
@@ -1510,7 +1510,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.11",
       title: "09.11-azure-kubernetes-aks",
-      name: "Azure Kubernetes Service",
+      name: "Azure Kubernetes Aks",
       explainer: `✅ **Definition & Purpose**: Fully managed Kubernetes service on Azure that simplifies deploying and managing containerized applications.
 ✅ **Architecture / Components**: Control Plane (managed by Azure), Node Pools (VMs), Kubectl, Pods, Services, Ingress Controllers.
 ✅ **Daily Tasks**: Creating AKS clusters, scaling node pools, deploying application manifests, and monitoring cluster health.
@@ -1525,7 +1525,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "09.12",
       title: "09.12-azure-cost-management",
-      name: "Azure Cost Optimization",
+      name: "Azure Cost Management",
       explainer: `✅ **Definition & Purpose**: Monitoring cloud spend, configuring budgets, and implementing cost-saving measures on Azure.
 ✅ **Architecture / Components**: Cost Analysis, Budgets, Azure Reservations, Azure Hybrid Benefit, Spot VMs.
 ✅ **Daily Tasks**: Reviewing monthly spend graphs, setting budget alerts, purchasing reservations, and cleaning up orphan resources.
@@ -1544,7 +1544,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.01",
       title: "10.01-intune-tenant-licensing",
-      name: "Tenant Setup & MDM",
+      name: "Intune Tenant Licensing",
       explainer: `✅ **Definition & Purpose**: Initializing Microsoft Intune endpoint management and configuring device authority parameters.
 ✅ **Architecture / Components**: Intune Admin Center, MDM Authority, licenses (Intune Plan 1/2, M365 E3/E5), Device Enrollment Managers.
 ✅ **Daily Tasks**: Verifying MDM authority settings, assigning licenses, adding admin roles, and auditing tenant configurations.
@@ -1559,7 +1559,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.02",
       title: "10.02-windows-autopilot-profiles",
-      name: "Windows Autopilot Setup",
+      name: "Windows Autopilot Profiles",
       explainer: `✅ **Definition & Purpose**: Zero-touch provisioning service to customize Out-Of-Box Experience (OOBE) and deploy corporate OS.
 ✅ **Architecture / Components**: Hardware Hashes, Autopilot profiles, OOBE settings (Language, Keyboard, Account type), ESP (Enrollment Status Page).
 ✅ **Daily Tasks**: Exporting hardware hashes, uploading devices to Autopilot list, assigning profiles, and checking ESP status.
@@ -1574,7 +1574,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.03",
       title: "10.03-device-enrollment-windows",
-      name: "Windows Enrollment Methods",
+      name: "Device Enrollment Windows",
       explainer: `✅ **Definition & Purpose**: Bringing Windows devices under active Intune management using automatic or manual registration.
 ✅ **Architecture / Components**: Automatic Enrollment (MAM/MDM user scope), GPO enrollment, Bulk enrollment packages (.ppkg), MDM user limits.
 ✅ **Daily Tasks**: Creating enrollment restriction policies, configuring GPO auto-enrollment, and troubleshooting registration logs.
@@ -1604,7 +1604,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.05",
       title: "10.05-device-configuration-profiles",
-      name: "Configuration Profiles & CSPs",
+      name: "Device Configuration Profiles",
       explainer: `✅ **Definition & Purpose**: Enforcing registry, feature, and security settings on managed endpoints remotely.
 ✅ **Architecture / Components**: Configuration Service Providers (CSPs), Settings Catalog, Administrative Templates, Custom OMA-URI profiles.
 ✅ **Daily Tasks**: Creating browser restriction profiles, deploying Wi-Fi profiles, configuring VPN profiles, and debugging settings.
@@ -1619,7 +1619,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.06",
       title: "10.06-intune-application-packaging",
-      name: "App Packaging & Win32 Apps",
+      name: "Intune Application Packaging",
       explainer: `✅ **Definition & Purpose**: Preparing and deploying desktop software applications (.msi, .exe) using the Win32 app delivery model.
 ✅ **Architecture / Components**: IntuneWinAppUtil packager, .intunewin format, install/uninstall commands, detection rules.
 ✅ **Daily Tasks**: Packaging software installers, configuring detection rules (Registry, File, MSI), and tracking deployment logs.
@@ -1634,7 +1634,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.07",
       title: "10.07-android-ios-enrollment",
-      name: "Android & iOS Enrollment",
+      name: "Android Ios Enrollment",
       explainer: `✅ **Definition & Purpose**: Configuring enrollment profiles and management boundaries for mobile operating systems.
 ✅ **Architecture / Components**: Apple Business Manager (ABM), ADE profiles, Android Enterprise (Fully Managed, Work Profile), MDM Push certificates.
 ✅ **Daily Tasks**: Renewing Apple MDM Push certificates, creating work profiles, and pushing mobile application packages.
@@ -1649,7 +1649,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.08",
       title: "10.08-application-protection-policies",
-      name: "MAM & App Protection Policies",
+      name: "Application Protection Policies",
       explainer: `✅ **Definition & Purpose**: Securing corporate data at the application layer without requiring full device enrollment (BYOD).
 ✅ **Architecture / Components**: Mobile Application Management (MAM), App Protection Policies, App PINs, Data leakage controls.
 ✅ **Daily Tasks**: Creating MAM policies, restricting copy-paste actions, enforcing app PIN codes, and monitoring MAM logs.
@@ -1664,7 +1664,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.09",
       title: "10.09-windows-updates-intune",
-      name: "Update Rings & WUfB",
+      name: "Windows Updates Intune",
       explainer: `✅ **Definition & Purpose**: Managing Windows OS updates, feature updates, and quality updates on endpoints remotely.
 ✅ **Architecture / Components**: Update Rings, Feature Updates, Quality Updates, Driver Updates, Windows Update for Business (WUfB).
 ✅ **Daily Tasks**: Configuring update deferral periods, creating test update rings, monitoring update compliance, and approving drivers.
@@ -1679,7 +1679,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.10",
       title: "10.10-device-security-baselines",
-      name: "Security Baselines & Hardening",
+      name: "Device Security Baselines",
       explainer: `✅ **Definition & Purpose**: Pre-configured groups of Microsoft security settings designed to secure devices and reduce vulnerability.
 ✅ **Architecture / Components**: Windows Security Baseline, Microsoft Defender Baseline, Microsoft Edge Baseline, settings conflicts.
 ✅ **Daily Tasks**: Deploying security baselines, auditing device security compliance, and resolving baseline setting conflicts.
@@ -1694,7 +1694,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.11",
       title: "10.11-intune-troubleshooting-logs",
-      name: "Intune Diagnostics & Logs",
+      name: "Intune Troubleshooting Logs",
       explainer: `✅ **Definition & Purpose**: Diagnosing device synchronization, policy deployment, and application installation errors on client systems.
 ✅ **Architecture / Components**: Intune Management Extension (IME), IME logs, Registry keys, Event Viewer (Applications and Services Logs).
 ✅ **Daily Tasks**: Collecting device logs, analyzing IME log files, checking registry keys, and checking MDM event logs.
@@ -1709,7 +1709,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.12",
       title: "10.12-remote-actions-wipes",
-      name: "Remote Actions & Device Lifecycle",
+      name: "Remote Actions Wipes",
       explainer: `✅ **Definition & Purpose**: Managing device lifecycle stages by triggering remote actions like wipes, retirements, and restarts.
 ✅ **Architecture / Components**: Wipe (destroys all data), Retire (removes corporate data, keeps personal), Fresh Start, Remote Lock.
 ✅ **Daily Tasks**: Offboarding employees by triggering device retirements, wiping lost/stolen laptops, and initiating remote syncs.
@@ -1724,7 +1724,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.13",
       title: "10.13-intune-co-management",
-      name: "SCCM & Intune Co-Management",
+      name: "Intune Co Management",
       explainer: `✅ **Definition & Purpose**: Managing endpoints concurrently using both Configuration Manager (SCCM) and Microsoft Intune.
 ✅ **Architecture / Components**: Co-management handler, workloads (Compliance, Apps, Updates), Cloud Management Gateway (CMG), tenant attach.
 ✅ **Daily Tasks**: Configuring co-management rules in SCCM, switching workloads to Intune, and monitoring client state.
@@ -1739,7 +1739,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "10.14",
       title: "10.14-endpoint-analytics-reports",
-      name: "Endpoint Analytics & Remediations",
+      name: "Endpoint Analytics Reports",
       explainer: `✅ **Definition & Purpose**: Monitoring client performance metrics, startup speeds, and running proactive remediation scripts.
 ✅ **Architecture / Components**: Endpoint Analytics, Startup Performance, Proactive Remediations (Detection script + Remediation script).
 ✅ **Daily Tasks**: Analyzing device startup score, deploying remediation scripts (e.g. clear temp files or restart stopped services), checking reports.
@@ -1758,7 +1758,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.01",
       title: "11.01-sccm-architecture-basics",
-      name: "SCCM Site Infrastructure",
+      name: "SCCM Architecture Basics",
       explainer: `✅ **Definition & Purpose**: On-premises enterprise systems management architecture designed to deploy software, updates, and OS images.
 ✅ **Architecture / Components**: Central Administration Site (CAS), Primary Sites, Secondary Sites, Distribution Points (DP), Management Points (MP).
 ✅ **Daily Tasks**: Monitoring site replication status, checking component states, managing boundaries, and deploying software.
@@ -1773,7 +1773,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.02",
       title: "11.02-sccm-client-installation",
-      name: "SCCM Client Push & Health",
+      name: "SCCM Client Installation",
       explainer: `✅ **Definition & Purpose**: Deploying the Configuration Manager client software to endpoints to enable active management.
 ✅ **Architecture / Components**: Client Push Installation, CCMSetup service, Client properties, Configuration Manager Applet.
 ✅ **Daily Tasks**: Monitoring client deployment success rates, repairing broken client agents, and checking client sync health.
@@ -1788,7 +1788,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.03",
       title: "11.03-boundary-groups-content",
-      name: "Boundaries & Boundary Groups",
+      name: "Boundary Groups Content",
       explainer: `✅ **Definition & Purpose**: Defining network location boundaries to assign clients to specific SCCM sites and local content DPs.
 ✅ **Architecture / Components**: Boundaries (IP Subnet, Active Directory Site, IP Ranges), Boundary Groups, Content fallback locations.
 ✅ **Daily Tasks**: Creating boundaries for new subnets, mapping boundaries to boundary groups, and monitoring content distribution.
@@ -1803,7 +1803,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.04",
       title: "11.04-application-deployment",
-      name: "Application Deployment & Detection",
+      name: "Application Deployment",
       explainer: `✅ **Definition & Purpose**: Packaging, distributing, and installing software applications on endpoints using target collections.
 ✅ **Architecture / Components**: Application model, Deployment Types, Requirements, Detection Methods (MSI, File, Registry).
 ✅ **Daily Tasks**: Creating application packages, defining deployment types, configuring detection rules, and monitoring deployment status.
@@ -1818,7 +1818,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.05",
       title: "11.05-software-update-point-sup",
-      name: "Software Updates & ADRs",
+      name: "Software Update Point Sup",
       explainer: `✅ **Definition & Purpose**: Centrally managing and deploying Windows OS patches using WSUS and SCCM deployment engines.
 ✅ **Architecture / Components**: Software Update Point (SUP), WSUS synchronization, Automatic Deployment Rules (ADR), Patch groups.
 ✅ **Daily Tasks**: Running ADRs for Patch Tuesday, monitoring compliance dashboards, and cleaning up expired updates.
@@ -1833,7 +1833,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.06",
       title: "11.06-operating-system-deployment",
-      name: "OSD & Task Sequences",
+      name: "Operating System Deployment",
       explainer: `✅ **Definition & Purpose**: Automated deployment of operating system images to bare-metal or existing workstations.
 ✅ **Architecture / Components**: Task Sequences, Boot Images, OS Images, PXE Boot, Driver Packages, USMT (user state migration).
 ✅ **Daily Tasks**: Creating task sequences, updating boot images with NIC drivers, managing driver packages, and PXE boot setups.
@@ -1848,7 +1848,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.07",
       title: "11.07-sccm-log-files-cmtrace",
-      name: "Troubleshooting Logs & CMTrace",
+      name: "SCCM Log Files Cmtrace",
       explainer: `✅ **Definition & Purpose**: Reading and analyzing server and client log files using CMTrace to locate system errors.
 ✅ **Architecture / Components**: CMTrace utility, client log directories, server log directories, log thread colors (Red=Error, Yellow=Warning).
 ✅ **Daily Tasks**: Monitoring software deployments, checking replication health, auditing clients, and tracing server logs.
@@ -1863,7 +1863,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "11.08",
       title: "11.08-sccm-co-management",
-      name: "SCCM Cloud Attach & Co-Management",
+      name: "SCCM Co Management",
       explainer: `✅ **Definition & Purpose**: Connecting on-premises SCCM infrastructure to cloud Microsoft Intune configurations.
 ✅ **Architecture / Components**: Tenant Attach, Cloud Management Gateway (CMG), Co-management settings, Active Directory synchronization.
 ✅ **Daily Tasks**: Enabling Cloud Attach, configuring CMG traffic, shifting workloads to Intune, and monitoring client sync.
@@ -1897,7 +1897,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "12.02",
       title: "12.02-aws-compute-ec2",
-      name: "Amazon EC2 Configurations",
+      name: "AWS Compute EC2",
       explainer: `✅ **Definition & Purpose**: Elastic Compute Cloud provides resizable virtual server computing capacity in the AWS cloud.
 ✅ **Architecture / Components**: Instance types (T-series, M-series, C-series), Amazon Machine Images (AMI), Security Groups, Key Pairs.
 ✅ **Daily Tasks**: Launching EC2 instances, attaching EBS volumes, creating security group rules, and executing SSH connections.
@@ -1912,7 +1912,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "12.03",
       title: "12.03-aws-networking-vpc",
-      name: "Amazon VPC & Networking",
+      name: "AWS Networking VPC",
       explainer: `✅ **Definition & Purpose**: Virtual Private Cloud allows you to provision isolated logical networks for AWS resources.
 ✅ **Architecture / Components**: VPC CIDR, public/private subnets, Internet Gateways (IGW), NAT Gateways, Route Tables.
 ✅ **Daily Tasks**: Creating subnets, configuring internet gateways, linking NAT gateways to private subnets, and updating routing paths.
@@ -1927,7 +1927,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "12.04",
       title: "12.04-aws-storage-s3-ebs",
-      name: "Amazon S3 & EBS Storage",
+      name: "AWS Storage S3 Ebs",
       explainer: `✅ **Definition & Purpose**: Scalable object storage (S3) and block-level storage volumes (EBS) for cloud resources.
 ✅ **Architecture / Components**: S3 Buckets, storage classes (Standard, Glacier), bucket policies, EBS volumes, IOPS types.
 ✅ **Daily Tasks**: Creating buckets, writing bucket access policies, uploading objects, and creating EBS volume snapshots.
@@ -1942,7 +1942,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "12.05",
       title: "12.05-aws-iam-identities",
-      name: "AWS IAM Identities & Access",
+      name: "AWS IAM Identities",
       explainer: `✅ **Definition & Purpose**: Identity and Access Management controls authentication and authorization access to AWS resources.
 ✅ **Architecture / Components**: IAM Users, Groups, Roles (assumed by services/users), JSON Policies (Actions, Resources, Effects).
 ✅ **Daily Tasks**: Creating users, configuring group memberships, assigning IAM roles to EC2 instances, and auditing keys.
@@ -1957,7 +1957,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "12.06",
       title: "12.06-aws-cloudwatch-billing",
-      name: "AWS CloudWatch & Budgets",
+      name: "AWS Cloudwatch Billing",
       explainer: `✅ **Definition & Purpose**: Monitoring resource metrics, logs, and tracking AWS account subscription cost limits.
 ✅ **Architecture / Components**: CloudWatch Metrics, Alarms, Logs, EventBridge, AWS Budgets, Cost Explorer.
 ✅ **Daily Tasks**: Creating CPU usage alarms, centralizing EC2 log files, setting cost alerts, and reviewing billing graphs.
@@ -1976,7 +1976,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "13.01",
       title: "13.01-hybrid-network-connectivity",
-      name: "Hybrid Cloud Network",
+      name: "Hybrid Network Connectivity",
       explainer: `✅ **Definition & Purpose**: Establishing network routes between local corporate offices and multi-cloud environments.
 ✅ **Architecture / Components**: Site-to-Site VPN, IPSec tunnels, BGP routing, Azure ExpressRoute, AWS Direct Connect.
 ✅ **Daily Tasks**: Setting up customer gateways, configuring routing tables, monitoring IPSec tunnel state, and verifying routes.
@@ -1991,7 +1991,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "13.02",
       title: "13.02-identity-federation-saml",
-      name: "Cloud Identity Federation",
+      name: "Identity Federation SAML",
       explainer: `✅ **Definition & Purpose**: Enabling single sign-on (SSO) authentication across multiple clouds using a central identity store.
 ✅ **Architecture / Components**: SAML 2.0, OAuth, Entra ID SSO, AWS IAM Identity Center, ADFS.
 ✅ **Daily Tasks**: Creating enterprise application registrations, mapping SAML assertions, and auditing federated logins.
@@ -2006,7 +2006,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "13.03",
       title: "13.03-multi-cloud-governance",
-      name: "Multi-Cloud Cost Governance",
+      name: "Multi Cloud Governance",
       explainer: `✅ **Definition & Purpose**: Implementing cost boundaries, resource tags, and compliance policies across AWS and Azure.
 ✅ **Architecture / Components**: Unified tagging schemas, CloudHealth/Ternary monitoring tools, cloud budget policies.
 ✅ **Daily Tasks**: Running asset audits, enforcing tagging policies, auditing billing reports, and identifying idle VMs.
@@ -2021,7 +2021,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "13.04",
       title: "13.04-disaster-recovery-dr",
-      name: "Cross-Cloud Disaster Recovery",
+      name: "Disaster Recovery Dr",
       explainer: `✅ **Definition & Purpose**: Developing failover strategies to restore systems and data across different cloud environments.
 ✅ **Architecture / Components**: RPO (Recovery Point Objective), RTO (Recovery Time Objective), data replication, pilot light, active-active.
 ✅ **Daily Tasks**: Setting up database replication pools, conducting DR drill failovers, and testing backup integrity.
@@ -2036,7 +2036,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "13.05",
       title: "13.05-terraform-iac",
-      name: "Terraform Infrastructure as Code",
+      name: "Terraform Iac",
       explainer: `✅ **Definition & Purpose**: Provisioning and managing multi-cloud infrastructure resources using declarative configuration files.
 ✅ **Architecture / Components**: Terraform Core, Providers (AWS, AzureRM), State File (.tfstate), HCL configuration syntax.
 ✅ **Daily Tasks**: Writing main.tf files, planning infrastructure changes, applying configurations, and managing state files.
@@ -2055,7 +2055,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "14.01",
       title: "14.01-operating-system-imaging",
-      name: "OS Imaging & Sysprep",
+      name: "Operating System Imaging",
       explainer: `✅ **Definition & Purpose**: Creating standard operating system install images and stripping hardware-specific details for deployment.
 ✅ **Architecture / Components**: Windows ISO, Sysprep utility, WinPE boot media, ADK tools, WIM image files.
 ✅ **Daily Tasks**: Running Sysprep on master VMs, capturing WIM files, updating install media, and deploying images.
@@ -2070,7 +2070,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "14.02",
       title: "14.02-printer-troubleshooting",
-      name: "Printer Spooler & Network Ports",
+      name: "Printer Troubleshooting",
       explainer: `✅ **Definition & Purpose**: Resolving local and network print queue failures and driver mismatches.
 ✅ **Architecture / Components**: Print Spooler service, spool directory (PRINTERS), print drivers, TCP/IP Standard port 9100.
 ✅ **Daily Tasks**: Restarting spooler services, purging corrupt print files, mapping network printers, and updating drivers.
@@ -2085,7 +2085,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "14.03",
       title: "14.03-network-connectivity-l1",
-      name: "L1 Network Diagnostics",
+      name: "Network Connectivity L1",
       explainer: `✅ **Definition & Purpose**: Isolating and resolving local physical and logical network connection issues on client PCs.
 ✅ **Architecture / Components**: NIC interface, patch cables, IP configs, DNS servers, gateways.
 ✅ **Daily Tasks**: Ping testing gateways, flushing local DNS, releasing/renewing DHCP leases, and checking cable link status.
@@ -2100,7 +2100,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "14.04",
       title: "14.04-outlook-profile-repairs",
-      name: "Outlook Profile & OST Repairs",
+      name: "Outlook Profile Repairs",
       explainer: `✅ **Definition & Purpose**: Troubleshooting client email sync, profile corruptions, and email database logs.
 ✅ **Architecture / Components**: Outlook Profile (MAPI), OST file (offline cache), PST file (archive storage), Outlook safe mode.
 ✅ **Daily Tasks**: Creating Outlook profiles, renaming corrupt OST files to force rebuilds, repairing PSTs, and managing add-ins.
@@ -2115,7 +2115,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "14.05",
       title: "14.05-active-directory-helpdesk",
-      name: "Helpdesk Account Operations",
+      name: "Active Directory Helpdesk",
       explainer: `✅ **Definition & Purpose**: Standard directory operations to unlock user accounts and reset expired passwords.
 ✅ **Architecture / Components**: ADUC console, user account control flags, password policies.
 ✅ **Daily Tasks**: Resetting passwords, unlocking AD accounts, modifying department names, and adding users to groups.
@@ -2134,7 +2134,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.01",
       title: "15.01-server-hardware-raid",
-      name: "RAID Arrays & Storage Parity",
+      name: "Server Hardware RAID",
       explainer: `✅ **Definition & Purpose**: Redundant Array of Independent Disks provides data redundancy and performance speed increases.
 ✅ **Architecture / Components**: RAID 0 (Striping), RAID 1 (Mirroring), RAID 5 (Distributed Parity), RAID 6 (Double Parity), RAID 10 (Striped Mirrors), Hot Spares.
 ✅ **Daily Tasks**: Configuring hardware RAID controllers, replacing failed disks in server bays, and monitoring rebuild speed indicators.
@@ -2149,7 +2149,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.02",
       title: "15.02-dns-infrastructure-mgmt",
-      name: "DNS Infrastructure Management",
+      name: "DNS Infrastructure Mgmt",
       explainer: `✅ **Definition & Purpose**: Core DNS configuration to manage lookup caching, forwarding paths, and directory scavenging.
 ✅ **Architecture / Components**: DNS forwarders, Root hints, zone transfers (AXFR/IXFR), scavenge intervals.
 ✅ **Daily Tasks**: Setting up DNS zone transfers to secondary servers, configuring root hints, and optimizing scavenge times.
@@ -2164,7 +2164,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.03",
       title: "15.03-gpo-troubleshooting-rsop",
-      name: "GPO Troubleshooting & RSoP",
+      name: "GPO Troubleshooting Rsop",
       explainer: `✅ **Definition & Purpose**: Analyzing and diagnosing GPO application blocks, inheritance settings, and filtering errors.
 ✅ **Architecture / Components**: Resultant Set of Policy (RSoP), gpresult utility, block inheritance, loopback processing.
 ✅ **Daily Tasks**: Running gpresult reports on client machines, checking GPO link status, and configuring loopback modes.
@@ -2179,7 +2179,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.04",
       title: "15.04-backup-vaults-3-2-1",
-      name: "Backup Strategy & Retention",
+      name: "Backup Vaults 3 2 1",
       explainer: `✅ **Definition & Purpose**: Implementing industry standard backup routines to prevent data loss in disaster scenarios.
 ✅ **Architecture / Components**: 3-2-1 backup rule (3 copies, 2 media types, 1 off-site), Full/Incremental/Differential schemes.
 ✅ **Daily Tasks**: Auditing backup success logs, copying tapes to offsite storage, and checking cloud replication status.
@@ -2194,7 +2194,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.05",
       title: "15.05-linux-server-administration",
-      name: "Linux Admin for Sysadmins",
+      name: "Linux Server Administration",
       explainer: `✅ **Definition & Purpose**: Managing and securing Linux server infrastructure within a mixed Windows/Linux domain.
 ✅ **Architecture / Components**: SSH configurations, system log directories (/var/log), package installations, domain integration (sssd).
 ✅ **Daily Tasks**: Configuring SSH access keys, updating packages, monitoring disk partitions, and parsing log files.
@@ -2209,7 +2209,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.06",
       title: "15.06-network-switch-config",
-      name: "Switch Configuration & Security",
+      name: "Network Switch Config",
       explainer: `✅ **Definition & Purpose**: Managing enterprise network switch parameters, port speed duplex settings, and access control.
 ✅ **Architecture / Components**: Port configurations, VLAN tagging, Link Aggregation (LACP), Port Security.
 ✅ **Daily Tasks**: Assigning switch ports to VLANs, configuring port trunks, setting up LACP channel groups, and locking ports.
@@ -2224,7 +2224,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.07",
       title: "15.07-patching-schedule-wsus",
-      name: "Enterprise Patching Schedules",
+      name: "Patching Schedule WSUS",
       explainer: `✅ **Definition & Purpose**: Managing OS update cycles to protect servers from vulnerability exploits without disrupting services.
 ✅ **Architecture / Components**: Testing rings, staging updates, maintenance windows, WSUS/SCCM approval schedules.
 ✅ **Daily Tasks**: Staging patches, coordinating reboot schedules with app owners, and monitoring compliance logs.
@@ -2239,7 +2239,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.08",
       title: "15.08-disaster-recovery-dr-plan",
-      name: "Disaster Recovery Planning",
+      name: "Disaster Recovery Dr Plan",
       explainer: `✅ **Definition & Purpose**: Developing and documenting policies and procedures to restore systems after disaster events.
 ✅ **Architecture / Components**: Business Impact Analysis (BIA), hot sites, cold sites, replication strategies, runbooks.
 ✅ **Daily Tasks**: Updating disaster recovery documents, conducting tabletop exercises, and auditing backup storage.
@@ -2254,7 +2254,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.09",
       title: "15.09-it-asset-license-mgmt",
-      name: "Asset & License Management",
+      name: "It Asset License Mgmt",
       explainer: `✅ **Definition & Purpose**: Managing hardware inventory and software licenses to ensure compliance and cost efficiency.
 ✅ **Architecture / Components**: Asset registries, software license counts, compliance audits, lease limits.
 ✅ **Daily Tasks**: Auditing installed software databases, checking server CPU counts for licensing compliance, and logging hardware leases.
@@ -2269,7 +2269,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "15.10",
       title: "15.10-itsm-change-mgmt-cab",
-      name: "Change Management & CAB",
+      name: "ITSM Change Mgmt Cab",
       explainer: `✅ **Definition & Purpose**: Structuring system modification procedures to reduce operational risks and outages.
 ✅ **Architecture / Components**: Change Advisory Board (CAB), Change Requests (RFC), risk assessments, rollback plans.
 ✅ **Daily Tasks**: Writing change requests, reviewing rollback plans, presenting changes to the CAB, and logging change success.
@@ -2288,7 +2288,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "16.01",
       title: "16.01-itsm-framework-basics",
-      name: "ITIL ITSM Fundamentals",
+      name: "ITSM Framework Basics",
       explainer: `✅ **Definition & Purpose**: IT Service Management (ITSM) framework designed to align IT services with business needs using standard workflows.
 ✅ **Architecture / Components**: Incident (restore service), Problem (find root cause), Change (approve system edits), Service Request (provide access).
 ✅ **Daily Tasks**: Categorizing user issues, linking incidents to problems, and routing requests to correct teams.
@@ -2303,7 +2303,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "16.02",
       title: "16.02-servicenow-ticket-lifecycle",
-      name: "ServiceNow Ticket States",
+      name: "Servicenow Ticket Lifecycle",
       explainer: `✅ **Definition & Purpose**: The lifecycle stages of an ITSM ticket from initial submission to final resolution and closure.
 ✅ **Architecture / Components**: Ticket states: New, Assigned, In Progress, On Hold, Resolved, Closed. Prioritization matrix (Impact vs Urgency).
 ✅ **Daily Tasks**: Updating ticket status, assigning tickets to teams, setting priorities, and writing resolution notes.
@@ -2318,7 +2318,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "16.03",
       title: "16.03-sla-breach-management",
-      name: "SLA Breach & Escalation",
+      name: "Sla Breach Management",
       explainer: `✅ **Definition & Purpose**: Service Level Agreements define agreed-upon response and resolution times for IT support.
 ✅ **Architecture / Components**: Response SLA, Resolution SLA, escalation rules, notifications.
 ✅ **Daily Tasks**: Monitoring ticket SLA countdown timers, escalating tickets close to breach, and documenting SLA breaches.
@@ -2333,7 +2333,7 @@ export const COURSES_SYLLABUS_DATA = {
     {
       id: "16.04",
       title: "16.04-incident-documentation",
-      name: "Documentation & Root Cause",
+      name: "Incident Documentation",
       explainer: `✅ **Definition & Purpose**: Creating comprehensive incident resolution logs and documenting Root Cause Analysis (RCA) summaries.
 ✅ **Architecture / Components**: Resolution notes, closure codes, Root Cause Analysis (RCA), Knowledge Base article linking.
 ✅ **Daily Tasks**: Writing post-incident reports, documenting root causes, and publishing KB articles.

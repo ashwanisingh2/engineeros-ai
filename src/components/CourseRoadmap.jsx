@@ -1,14 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Award, BookOpen, Clock, ChevronRight, Check, Loader } from 'lucide-react';
+import { Award, BookOpen, Clock, ChevronRight, Check, Loader, AlertCircle, Mic } from 'lucide-react';
 import { callAIService } from '../utils/aiService';
 import { COURSES_SYLLABUS_DATA } from '../data/coursesSyllabusData';
+import VoiceExplainer from './VoiceExplainer';
 
-export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
+const STUDY_GUIDE_PHASES = [
+  "Overview & Architecture",
+  "Installation & Configuration",
+  "Administration & Monitoring",
+  "Troubleshooting & Diagnostics",
+  "Real-World Industry Tasks",
+  "Practical Hands-On Lab",
+  "Cheat Sheet (Commands & Paths)"
+];
+
+export default function CourseRoadmap({ courses, settings, onUpdateCourse, linkCourseId, linkLessonId, onClearLink }) {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [lessonSubTab, setLessonSubTab] = useState('explainer'); // 'explainer', 'problem', 'solution', 'guide'
   const [generating, setGenerating] = useState(false);
   const [guideGenerating, setGuideGenerating] = useState(false);
+  const [guidePhaseIndex, setGuidePhaseIndex] = useState(0);
+  const [guideError, setGuideError] = useState(null);
+  const [showVoiceExplainer, setShowVoiceExplainer] = useState(false);
+  const [dailyHours, setDailyHours] = useState(() => {
+    const planSaved = localStorage.getItem('engineeros_study_plan');
+    if (planSaved) {
+      try {
+        const parsed = JSON.parse(planSaved);
+        if (parsed.dailyHours) return parseInt(parsed.dailyHours);
+      } catch (e) {}
+    }
+    return 3;
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  // Handle external link navigation from Study Planner
+  useEffect(() => {
+    if (linkCourseId !== undefined && linkCourseId !== null) {
+      setSelectedCourseId(linkCourseId);
+    }
+    if (linkLessonId !== undefined && linkLessonId !== null) {
+      setActiveLessonId(linkLessonId);
+      setLessonSubTab('explainer');
+    }
+    if ((linkCourseId || linkLessonId) && onClearLink) {
+      onClearLink();
+    }
+  }, [linkCourseId, linkLessonId, onClearLink]);
+  // Track last opened lesson for the Dashboard continue card
+  useEffect(() => {
+    if (activeLessonId && selectedCourseId) {
+      const course = courses.find(c => c.id === selectedCourseId);
+      if (course) {
+        const syllabus = getCourseSyllabus(course);
+        const lesson = syllabus.find(l => l.id === activeLessonId);
+        if (lesson) {
+          localStorage.setItem('engineeros_last_lesson', JSON.stringify({
+            courseId: selectedCourseId,
+            courseName: course.name,
+            lessonId: activeLessonId,
+            lessonName: lesson.name
+          }));
+        }
+      }
+    }
+  }, [activeLessonId, selectedCourseId, courses]);
 
   // AI Generated / cached study guides (13 phases) in localStorage
   const [cachedGuides, setCachedGuides] = useState(() => {
@@ -22,40 +79,88 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
     return saved ? JSON.parse(saved) : {};
   });
 
-  // Completed lessons progress saved in localStorage
-  const [completedLessons, setCompletedLessons] = useState(() => {
-    const saved = localStorage.getItem('engineeros_completed_lessons');
+  // Completed/checked lessons progress saved in localStorage key "engineeros_progress"
+  const [checkedLessons, setCheckedLessons] = useState(() => {
+    const saved = localStorage.getItem('engineeros_progress');
     return saved ? JSON.parse(saved) : {};
   });
 
+  // On component mount, load from localStorage and restore checked state
   useEffect(() => {
-    localStorage.setItem('engineeros_completed_lessons', JSON.stringify(completedLessons));
-  }, [completedLessons]);
+    const saved = localStorage.getItem('engineeros_progress');
+    if (saved) {
+      setCheckedLessons(JSON.parse(saved));
+    }
+  }, []);
+
+  // Cache check on open: load cached guides from localStorage instantly when lesson changes
+  useEffect(() => {
+    const saved = localStorage.getItem('engineeros_cached_guides');
+    if (saved) {
+      setCachedGuides(JSON.parse(saved));
+    }
+  }, [activeLessonId]);
+
+  // Save checkedLessons on modification
+  useEffect(() => {
+    localStorage.setItem('engineeros_progress', JSON.stringify(checkedLessons));
+  }, [checkedLessons]);
+
+  // Sync and recalculate completion percentages for all courses immediately
+  useEffect(() => {
+    courses.forEach(course => {
+      const syllabus = getCourseSyllabus(course);
+      if (syllabus.length > 0) {
+        const completedCount = syllabus.filter(l => checkedLessons[`${course.id}_${l.id}`]).length;
+        let status = 'In Progress';
+        if (completedCount === 0) status = 'Not Started';
+        else if (completedCount === syllabus.length) status = 'Completed';
+
+        if (course.completedModules !== completedCount || course.status !== status) {
+          onUpdateCourse(course.id, { completedModules: completedCount, status });
+        }
+      }
+    });
+  }, [checkedLessons]);
 
   const handleGenerateStudyGuide = async (course, lesson) => {
     if (!settings.apiKey) {
       alert("API Key missing! Settings page par model key configure karein.");
       return;
     }
+    
+    // Clear old cache for this lesson if re-fetching/regenerating
+    setCachedGuides(prev => {
+      const updated = { ...prev };
+      delete updated[`${course.id}_${lesson.id}`];
+      localStorage.setItem('engineeros_cached_guides', JSON.stringify(updated));
+      return updated;
+    });
+
+    setGuideError(null);
     setGuideGenerating(true);
+    setGuidePhaseIndex(0);
+
+    // Set up phase simulation timer
+    const progressInterval = setInterval(() => {
+      setGuidePhaseIndex(prev => {
+        if (prev < 6) return prev + 1;
+        return prev;
+      });
+    }, 1200);
+
     try {
       const promptText = `Generate a COMPLETE, ENTERPRISE-GRADE study guide and reference manual for the IT topic: "${lesson.name}" (from the course "${course.name}").
       
-      You must act as a Senior IT Infrastructure Architect and provide a highly detailed, professional, and click-by-click instruction guide. DO NOT output brief summaries or placeholders. Cover all of the following 13 sections in detail:
+      You must act as a Senior IT Infrastructure Architect and provide a highly detailed, professional, and click-by-click instruction guide. DO NOT output brief summaries or placeholders. Cover all of the following 7 sections in detail:
       
-      1. **Overview**: Detailed explanation, purpose, definition, and business benefits.
-      2. **Architecture**: Core design, components, and data flows.
-      3. **Installation**: Prerequisites, system requirements, and step-by-step installation instructions.
-      4. **Configuration**: Exact navigation paths, configuration parameters, and initial setup steps.
-      5. **Administration**: Daily management tasks, monitoring metrics, and routine maintenance logs.
-      6. **Troubleshooting**: A structured database table of 3-5 common issues, possible causes, diagnostic steps, and resolutions.
-      7. **Real Industry Tasks**: Specific action items categorized by L1, L2, and L3 support tiers.
-      8. **KB Article**: A complete, copyable Knowledge Base article in the format (Title, Objective, Environment, Steps, Verification, Rollback, Notes).
-      9. **Practical Lab**: A step-by-step hands-on training lab exercise (Beginner, Intermediate, or Advanced level).
-      10. **Interview Questions**: 3-5 technical interview questions (categorized by difficulty) with detailed answers.
-      11. **Cheat Sheet**: A markdown table of important commands, configurations, or paths.
-      12. **Exam Notes**: Critical facts, mind-map notes, and 2 sample MCQs with explanations.
-      13. **Best Practices**: A checklist of industry-standard security hardening and optimization best practices.
+      1. **Overview & Architecture**: Detailed explanation, purpose, design diagram layout descriptions, and core component workflows.
+      2. **Installation & Configuration**: Exact prerequisites, step-by-step install scripts, config parameters, and deployment commands.
+      3. **Administration & Monitoring**: Routine sysadmin tasks, system health checks, log paths, and core management interfaces.
+      4. **Troubleshooting & Diagnostics**: Structured database table of common issues, error codes, log files to check, diagnostic commands, and recovery procedures.
+      5. **Real-World Industry Tasks**: Action items categorized by support levels (L1 Ticket Resolution, L2 Administration, L3 Architecting/Engineering).
+      6. **Practical Hands-On Lab**: Fully-detailed walkthrough of a lab exercise including setup instructions, task checklist, and verification steps.
+      7. **Cheat Sheet (Commands & Paths)**: Markdown table of critical CLI commands, config file directories, and registry/config keys.
 
       Use clean markdown formatting, alert blocks, and code tags where appropriate. Do not output introductory text, start directly with the title and content.`;
 
@@ -64,14 +169,21 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
         prompt: promptText
       });
 
+      clearInterval(progressInterval);
+
+      if (!responseText || responseText.trim().length < 100) {
+        throw new Error("AI Service returned an empty or malformed guide. Please verify your settings and try again.");
+      }
+
       setCachedGuides(prev => {
         const updated = { ...prev, [`${course.id}_${lesson.id}`]: responseText };
         localStorage.setItem('engineeros_cached_guides', JSON.stringify(updated));
         return updated;
       });
     } catch (err) {
+      clearInterval(progressInterval);
       console.error(err);
-      alert(`Study Guide generation failed: ${err.message}`);
+      setGuideError(err.message || "Failed to generate study guide. Please verify your API settings.");
     } finally {
       setGuideGenerating(false);
     }
@@ -80,6 +192,7 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
   // Sync active lesson selection
   useEffect(() => {
     setLessonSubTab('explainer');
+    setGuideError(null);
   }, [activeLessonId]);
 
   const getCourseSyllabus = (course) => {
@@ -160,22 +273,34 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
     if (status === 'Completed') {
       completed = total;
       const syllabus = getCourseSyllabus(course);
-      const updated = { ...completedLessons };
+      const updated = { ...checkedLessons };
       syllabus.forEach(lesson => {
         updated[`${courseId}_${lesson.id}`] = true;
       });
-      setCompletedLessons(updated);
+      setCheckedLessons(updated);
     } else if (status === 'Not Started') {
       completed = 0;
       const syllabus = getCourseSyllabus(course);
-      const updated = { ...completedLessons };
+      const updated = { ...checkedLessons };
       syllabus.forEach(lesson => {
         delete updated[`${courseId}_${lesson.id}`];
       });
-      setCompletedLessons(updated);
+      setCheckedLessons(updated);
     }
 
     onUpdateCourse(courseId, { status, completedModules: completed });
+  };
+
+  const handleResetCourseProgress = (course) => {
+    if (window.confirm(`Are you sure you want to reset all progress for the course "${course.name}"?`)) {
+      const updated = { ...checkedLessons };
+      const syllabus = getCourseSyllabus(course);
+      syllabus.forEach(lesson => {
+        delete updated[`${course.id}_${lesson.id}`];
+      });
+      setCheckedLessons(updated);
+      onUpdateCourse(course.id, { completedModules: 0, status: 'Not Started' });
+    }
   };
 
   const handleHoursChange = (courseId, hours) => {
@@ -183,12 +308,36 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
     onUpdateCourse(courseId, { hoursRemaining: hoursVal });
   };
 
+  const handleDailyHoursChange = (hours) => {
+    const val = parseInt(hours) || 1;
+    setDailyHours(val);
+    const planSaved = localStorage.getItem('engineeros_study_plan');
+    let parsed = {};
+    if (planSaved) {
+      try {
+        parsed = JSON.parse(planSaved);
+      } catch (e) {}
+    }
+    parsed.dailyHours = val;
+    localStorage.setItem('engineeros_study_plan', JSON.stringify(parsed));
+  };
+
+  const handleResetAllProgress = () => {
+    if (window.confirm("Are you sure you want to reset ALL certification progress? This will delete all completed lessons record!")) {
+      setCheckedLessons({});
+      courses.forEach(course => {
+        onUpdateCourse(course.id, { completedModules: 0, status: 'Not Started' });
+      });
+      localStorage.removeItem('engineeros_last_lesson');
+      alert("All progress reset successfully.");
+    }
+  };
+
   const toggleLesson = (course, lessonId) => {
     const key = `${course.id}_${lessonId}`;
-    const newCompleted = { ...completedLessons, [key]: !completedLessons[key] };
-    setCompletedLessons(newCompleted);
+    const newCompleted = { ...checkedLessons, [key]: !checkedLessons[key] };
+    setCheckedLessons(newCompleted);
 
-    // Recalculate progress modules
     const syllabus = getCourseSyllabus(course);
     const completedCount = syllabus.filter(l => newCompleted[`${course.id}_${l.id}`]).length;
 
@@ -197,13 +346,51 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
     else if (completedCount === syllabus.length) status = 'Completed';
 
     onUpdateCourse(course.id, { completedModules: completedCount, status });
+
+    // Log to recent activities if the lesson was completed (checked)
+    if (newCompleted[key]) {
+      const activities = JSON.parse(localStorage.getItem('engineeros_activities') || '[]');
+      const lessonName = syllabus.find(l => l.id === lessonId)?.name || lessonId;
+      activities.unshift({
+        id: Date.now().toString(),
+        action: "Lesson Completed",
+        details: `${course.name}: ${lessonName}`,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('engineeros_activities', JSON.stringify(activities.slice(0, 5)));
+    }
   };
 
-  // Grouping courses by Role Level
+  // Grouping courses by Role Level with query and status filters
+  const filteredCourses = courses.filter(course => {
+    const matchesSearch = course.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || course.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   const roles = {
-    "L1 Support / Helpdesk": courses.filter(c => c.role === 'L1'),
-    "L2 Systems Administrator": courses.filter(c => c.role === 'L2' || c.role === 'L2-L3'),
-    "L3 Multi-Cloud Systems Engineer": courses.filter(c => c.role === 'L3')
+    "L1 Support / Helpdesk": filteredCourses.filter(c => c.role === 'L1'),
+    "L2 Systems Administrator": filteredCourses.filter(c => c.role === 'L2' || c.role === 'L2-L3'),
+    "L3 Multi-Cloud Systems Engineer": filteredCourses.filter(c => c.role === 'L3')
+  };
+
+  const totalHoursRemaining = courses.reduce((sum, c) => {
+    if (c.status === 'Completed') return sum;
+    const hours = c.hoursRemaining !== undefined ? c.hoursRemaining : 10;
+    return sum + hours;
+  }, 0);
+
+  const totalLessons = courses.reduce((sum, c) => sum + (c.totalModules || 10), 0);
+  const completedLessonsCount = courses.reduce((sum, c) => sum + (c.completedModules || 0), 0);
+  const overallPercent = totalLessons > 0 ? Math.round((completedLessonsCount / totalLessons) * 100) : 0;
+
+  const estimatedDaysToComplete = dailyHours > 0 ? Math.ceil(totalHoursRemaining / dailyHours) : 0;
+
+  const getEstimatedCompletionDate = () => {
+    if (estimatedDaysToComplete === 0) return "Completed!";
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + estimatedDaysToComplete);
+    return targetDate.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   const getActiveLesson = (courseId) => {
@@ -217,11 +404,126 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="border-b border-gray-800 pb-6 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-textPrimary flex items-center gap-2">
-          📖 ICNT Academy Course Roadmap
-        </h1>
-        <p className="text-textMuted mt-1">Track your syllabus progress across all 16 certification modules and estimate completion timelines.</p>
+      <div className="border-b border-gray-800 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-textPrimary flex items-center gap-2">
+            📖 ICNT Academy Course Roadmap
+          </h1>
+          <p className="text-textMuted mt-1">Track your syllabus progress across all 16 certification modules and estimate completion timelines.</p>
+        </div>
+      </div>
+
+      {/* Timeline & Estimation Banner */}
+      <div className="bg-cardBg border border-gray-800 rounded-2xl p-6 mb-8 space-y-6 shadow-xl relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primaryAccent/5 rounded-full blur-3xl -z-10" />
+
+        <div className="flex items-center justify-between border-b border-gray-850 pb-3">
+          <div className="flex items-center gap-2">
+            <Clock size={16} className="text-primaryAccent" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-textPrimary">📈 Completion Timeline Estimator</h2>
+          </div>
+          <button
+            onClick={handleResetAllProgress}
+            className="text-[9px] bg-red-950/20 border border-red-900/40 hover:bg-red-900/40 text-red-400 font-bold px-2.5 py-1 rounded transition-all"
+          >
+            ⚠️ Reset All Progress
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {/* Total Hours Remaining */}
+          <div className="bg-darkBg/50 border border-gray-850 p-4 rounded-xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold text-textMuted uppercase tracking-wider">Total Hours Left</span>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="text-2xl font-mono font-bold text-textPrimary">{totalHoursRemaining}</span>
+              <span className="text-xs text-textMuted font-medium">Hours</span>
+            </div>
+            <span className="text-[9px] text-textMuted mt-1 block">Sum of all non-completed courses</span>
+          </div>
+
+          {/* Daily Study Hours Slider */}
+          <div className="bg-darkBg/50 border border-gray-850 p-4 rounded-xl flex flex-col justify-between">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-textMuted uppercase tracking-wider">Study Rate / Day</span>
+              <span className="text-xs font-mono font-bold text-primaryAccent bg-primaryAccent/10 px-1.5 py-0.5 rounded">{dailyHours}h</span>
+            </div>
+            <div className="mt-3">
+              <input
+                type="range"
+                min="1"
+                max="8"
+                value={dailyHours}
+                onChange={(e) => handleDailyHoursChange(e.target.value)}
+                className="w-full h-1.5 bg-sidebarBg rounded-lg appearance-none cursor-pointer accent-primaryAccent"
+              />
+            </div>
+            <div className="flex justify-between text-[8px] text-textMuted font-bold uppercase font-mono mt-1">
+              <span>1h</span>
+              <span>4h</span>
+              <span>8h</span>
+            </div>
+          </div>
+
+          {/* Estimated Completion Date */}
+          <div className="bg-darkBg/50 border border-gray-850 p-4 rounded-xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold text-textMuted uppercase tracking-wider">Estimated Target</span>
+            <div className="mt-2 text-sm font-bold text-successGreen truncate">
+              {getEstimatedCompletionDate()}
+            </div>
+            <span className="text-[9px] text-textMuted mt-1 block">
+              {estimatedDaysToComplete > 0 ? `~${estimatedDaysToComplete} days of daily study` : 'All done!'}
+            </span>
+          </div>
+
+          {/* Overall Lessons Progress */}
+          <div className="bg-darkBg/50 border border-gray-850 p-4 rounded-xl flex flex-col justify-between">
+            <div className="flex justify-between items-center text-[10px] font-bold text-textMuted uppercase tracking-wider">
+              <span>Overall Progress</span>
+              <span className="font-mono text-textPrimary">{overallPercent}%</span>
+            </div>
+            <div className="w-full bg-sidebarBg h-2 rounded-full overflow-hidden mt-3">
+              <div
+                className="bg-successGreen h-full transition-all duration-500 rounded-full"
+                style={{ width: `${overallPercent}%` }}
+              />
+            </div>
+            <span className="text-[9px] text-textMuted mt-1 block">
+              {completedLessonsCount} / {totalLessons} Lessons Done
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Search & Filter Controls */}
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-cardBg border border-gray-800 p-4 rounded-xl mb-6">
+        <div className="w-full md:w-72 relative">
+          <input
+            type="text"
+            placeholder="Search certification courses..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-darkBg border border-gray-850 text-xs text-textPrimary px-3 py-2 rounded-lg focus:outline-none focus:border-primaryAccent pl-8"
+          />
+          <span className="absolute left-2.5 top-2.5 text-textMuted text-xs">🔍</span>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+          <span className="text-xs font-semibold text-textMuted shrink-0">Filter:</span>
+          {['All', 'Not Started', 'In Progress', 'Completed'].map(status => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`text-xs px-3 py-1.5 rounded-lg border font-semibold transition-all shrink-0 ${
+                statusFilter === status
+                  ? 'bg-primaryAccent text-white border-primaryAccent'
+                  : 'bg-sidebarBg text-textMuted border-gray-800 hover:text-textPrimary hover:bg-gray-800/50'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Role Tracks */}
@@ -277,22 +579,30 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                           {course.completedModules || 0}/{course.totalModules} Lessons Completed
                         </span>
                         
-                        <button
-                          onClick={() => {
-                            if (isExpanded) {
-                              setSelectedCourseId(null);
-                              setActiveLessonId(null);
-                            } else {
-                              setSelectedCourseId(course.id);
-                              const courseSyllabus = getCourseSyllabus(course);
-                              setActiveLessonId(courseSyllabus[0]?.id || null);
-                              setLessonSubTab('explainer');
-                            }
-                          }}
-                          className="text-[10px] bg-sidebarBg border border-gray-800 hover:bg-gray-800 px-3 py-1 rounded text-primaryAccent font-bold transition-all"
-                        >
-                          {isExpanded ? 'Close Syllabus' : 'Open Syllabus'}
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleResetCourseProgress(course)}
+                            className="text-[10px] bg-red-950/40 border border-red-900/60 hover:bg-red-900/60 px-3 py-1 rounded text-red-400 font-bold transition-all"
+                          >
+                            Reset Progress
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (isExpanded) {
+                                setSelectedCourseId(null);
+                                setActiveLessonId(null);
+                              } else {
+                                setSelectedCourseId(course.id);
+                                const courseSyllabus = getCourseSyllabus(course);
+                                setActiveLessonId(courseSyllabus[0]?.id || null);
+                                setLessonSubTab('explainer');
+                              }
+                            }}
+                            className="text-[10px] bg-sidebarBg border border-gray-800 hover:bg-gray-800 px-3 py-1 rounded text-primaryAccent font-bold transition-all"
+                          >
+                            {isExpanded ? 'Close Syllabus' : 'Open Syllabus'}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -327,7 +637,7 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                       <div className="border-t border-gray-850 pt-5 mt-4 space-y-4 animate-fadeIn">
                         
                         {syllabus.length > 0 ? (
-                          <div className="space-y-4">
+                           <div className="space-y-4">
                             <h4 className="text-xs font-bold text-textMuted flex items-center gap-1.5 uppercase tracking-wide">
                               📚 Syllabus Exercises (Matt Pocock Skills Style)
                             </h4>
@@ -336,7 +646,7 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                               {/* Left: Lessons List */}
                               <div className="lg:col-span-2 space-y-2 max-h-[300px] overflow-y-auto pr-1">
                                 {syllabus.map(lesson => {
-                                  const isFinished = !!completedLessons[`${course.id}_${lesson.id}`];
+                                  const isFinished = !!checkedLessons[`${course.id}_${lesson.id}`];
                                   const isCurrent = activeLessonId === lesson.id;
                                   
                                   return (
@@ -372,26 +682,35 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                 {activeLesson ? (
                                   <div className="flex-grow flex flex-col justify-between">
                                     <div>
-                                      {/* Tabs: explainer, problem, solution, guide */}
-                                      <div className="flex border-b border-gray-850 gap-3 pb-1.5 mb-3 overflow-x-auto">
-                                        {[
-                                          { id: 'explainer', label: '📖 Explainer' },
-                                          { id: 'problem', label: '📝 Problem' },
-                                          { id: 'solution', label: '✔️ Solution' },
-                                          { id: 'guide', label: '⚡ Enterprise Guide (13-Phases)' }
-                                        ].map(tab => (
-                                          <button
-                                            key={tab.id}
-                                            onClick={() => setLessonSubTab(tab.id)}
-                                            className={`text-[10px] font-bold pb-1 border-b-2 transition-all px-1 shrink-0 ${
-                                              lessonSubTab === tab.id
-                                                ? 'border-primaryAccent text-primaryAccent'
-                                                : 'border-transparent text-textMuted hover:text-textPrimary'
-                                            }`}
-                                          >
-                                            {tab.label}
-                                          </button>
-                                        ))}
+                                      {/* Tabs Header with Explain It voice trigger */}
+                                      <div className="flex items-center justify-between border-b border-gray-850 pb-1.5 mb-3 overflow-x-auto">
+                                        <div className="flex gap-3">
+                                          {[
+                                            { id: 'explainer', label: '📖 Explainer' },
+                                            { id: 'problem', label: '📝 Problem' },
+                                            { id: 'solution', label: '✔️ Solution' },
+                                            { id: 'guide', label: '⚡ Enterprise Guide (7-Phases)' }
+                                          ].map(tab => (
+                                            <button
+                                              key={tab.id}
+                                              onClick={() => setLessonSubTab(tab.id)}
+                                              className={`text-[10px] font-bold pb-1 border-b-2 transition-all px-1 shrink-0 ${
+                                                lessonSubTab === tab.id
+                                                  ? 'border-primaryAccent text-primaryAccent'
+                                                  : 'border-transparent text-textMuted hover:text-textPrimary'
+                                              }`}
+                                            >
+                                              {tab.label}
+                                            </button>
+                                          ))}
+                                        </div>
+                                        <button
+                                          onClick={() => setShowVoiceExplainer(true)}
+                                          className="flex items-center gap-1 bg-primaryAccent/10 border border-primaryAccent/20 hover:bg-primaryAccent/25 text-primaryAccent text-[9px] font-bold py-1 px-2.5 rounded transition-colors"
+                                        >
+                                          <Mic size={10} />
+                                          Explain It
+                                        </button>
                                       </div>
                                       
                                       {/* Content */}
@@ -413,16 +732,43 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                         )}
                                         {lessonSubTab === 'guide' && (
                                           <div className="space-y-3">
-                                            {cachedGuides[`${course.id}_${activeLesson.id}`] ? (
-                                              <div className="space-y-3">
-                                                <div className="flex justify-between items-center border-b border-gray-850 pb-2">
-                                                  <span className="text-primaryAccent font-bold text-[10px]">13-Phase Study Guide Cached</span>
+                                            {guideGenerating ? (
+                                              <div className="text-center py-6 space-y-3 bg-black/25 rounded-lg border border-gray-850 p-4">
+                                                <Loader size={24} className="animate-spin text-primaryAccent mx-auto" />
+                                                <p className="text-xs font-semibold text-textPrimary">
+                                                  Generating Phase {guidePhaseIndex + 1}/13: {STUDY_GUIDE_PHASES[guidePhaseIndex]}...
+                                                </p>
+                                                <p className="text-[10px] text-textMuted">
+                                                  Structuring enterprise architecture, lab setups, and troubleshooting checklists.
+                                                </p>
+                                              </div>
+                                            ) : guideError ? (
+                                              <div className="bg-red-950/20 border border-red-900 rounded-lg p-4 space-y-3">
+                                                <div className="flex items-start gap-2 text-red-400">
+                                                  <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                                                  <div className="text-xs">
+                                                    <span className="font-bold block mb-1">Failed to generate study guide:</span>
+                                                    <span className="font-mono">{guideError}</span>
+                                                  </div>
+                                                </div>
+                                                <div className="flex justify-end">
                                                   <button
                                                     onClick={() => handleGenerateStudyGuide(course, activeLesson)}
-                                                    disabled={guideGenerating}
-                                                    className="text-[9px] bg-sidebarBg hover:bg-gray-800 border border-gray-800 text-textMuted px-2 py-0.5 rounded transition-all"
+                                                    className="bg-red-900/60 hover:bg-red-800 border border-red-700 text-red-200 text-xs font-bold py-1.5 px-4 rounded transition-all"
                                                   >
-                                                    {guideGenerating ? "Regenerating..." : "🔄 Regenerate"}
+                                                    Retry Generation
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            ) : cachedGuides[`${course.id}_${activeLesson.id}`] ? (
+                                              <div className="space-y-3">
+                                                <div className="flex justify-between items-center border-b border-gray-850 pb-2">
+                                                  <span className="text-primaryAccent font-bold text-[10px]">7-Phase Study Guide Cached</span>
+                                                  <button
+                                                    onClick={() => handleGenerateStudyGuide(course, activeLesson)}
+                                                    className="text-[9px] bg-sidebarBg hover:bg-gray-800 border border-gray-800 text-textMuted px-2 py-0.5 rounded transition-all animate-pulse"
+                                                  >
+                                                    🔄 Regenerate
                                                   </button>
                                                 </div>
                                                 <div className="whitespace-pre-wrap leading-relaxed select-text bg-black/25 p-3 rounded-lg border border-gray-850 overflow-y-auto max-h-[220px] font-mono text-[10px]">
@@ -432,14 +778,13 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                             ) : (
                                               <div className="text-center py-4 space-y-2">
                                                 <p className="text-[10px] text-textMuted leading-relaxed">
-                                                  Full 13-Phase Enterprise Study Guide is not yet generated for this topic.
+                                                  Full 7-Phase Enterprise Study Guide is not yet generated for this topic.
                                                 </p>
                                                 <button
                                                   onClick={() => handleGenerateStudyGuide(course, activeLesson)}
-                                                  disabled={guideGenerating}
-                                                  className="bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-1 px-3 rounded shadow-lg hover:shadow-indigo-500/20 transition-all text-[10px] flex items-center justify-center gap-1.5 mx-auto disabled:opacity-50"
+                                                  className="bg-primaryAccent hover:bg-indigo-700 text-white font-semibold py-1.5 px-4 rounded shadow-lg hover:shadow-indigo-500/20 transition-all text-xs flex items-center justify-center gap-1.5 mx-auto"
                                                 >
-                                                  {guideGenerating ? <Loader size={10} className="animate-spin" /> : "⚡ Generate 13-Phase Guide"}
+                                                  ⚡ Generate 7-Phase Guide
                                                 </button>
                                               </div>
                                             )}
@@ -447,6 +792,15 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                                         )}
                                       </div>
                                     </div>
+
+                                    {/* Voice Explainer Modal */}
+                                    {showVoiceExplainer && (
+                                      <VoiceExplainer
+                                        lesson={activeLesson}
+                                        course={course}
+                                        onClose={() => setShowVoiceExplainer(false)}
+                                      />
+                                    )}
                                   </div>
                                 ) : (
                                   <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-textMuted">
@@ -459,7 +813,7 @@ export default function CourseRoadmap({ courses, settings, onUpdateCourse }) {
                           </div>
                         ) : (
                           <div className="text-center max-w-sm mx-auto space-y-3 py-6 animate-fadeIn">
-                            <BookOpen className="mx-auto text-textMuted opacity-45" size={32} />
+                             <BookOpen className="mx-auto text-textMuted opacity-45" size={32} />
                             <h4 className="text-xs font-bold text-textPrimary">No Study Material Cached</h4>
                             <p className="text-[11px] text-textMuted leading-relaxed">
                               Syllabus study guides and exercises for **{course.name}** are offline. Generate detailed lessons, problems, and solutions using the AI Engine.
