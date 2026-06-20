@@ -14,7 +14,6 @@ import Settings from './components/Settings';
 import TicketSimulator from './components/TicketSimulator';
 import ExamPractice from './components/ExamPractice';
 import LabGuides from './components/LabGuides';
-import ResumeAnalyzer from './components/ResumeAnalyzer';
 
 const STARTER_SCRIPTS = [
   {
@@ -328,6 +327,69 @@ Get-ADComputer -Filter * -SearchBase "DC=yourdomain,DC=com" |
     }
   } | Export-Csv "C:\\Reports\\BitLocker_Keys.csv" -NoTypeInformation
 Write-Host "BitLocker keys exported." -ForegroundColor Green`
+  },
+  {
+    id: "21",
+    title: "Flush DNS & Renew DHCP IP",
+    description: "Resets local IP socket status, flushes dns caches, and requests new network address leases.",
+    category: "dns",
+    script: `@echo off
+echo Flashing DNS cache...
+ipconfig /flushdns
+echo Releasing current IP address...
+ipconfig /release
+echo Renewing IP lease from DHCP server...
+ipconfig /renew
+echo Network stack reset complete.
+pause`,
+    type: "cmd"
+  },
+  {
+    id: "22",
+    title: "SFC & DISM Local Component Store Repair",
+    description: "Launches local system file integrity checker and online DISM deployment image repair tools.",
+    category: "windows",
+    script: `@echo off
+echo Checking system file integrity...
+sfc /scannow
+echo.
+echo Checking Windows component store health...
+dism /online /cleanup-image /scanhealth
+echo.
+echo Repairing Windows component store image...
+dism /online /cleanup-image /restorehealth
+echo Complete. Please reboot if issues persist.
+pause`,
+    type: "cmd"
+  },
+  {
+    id: "23",
+    title: "Clear Windows Temp & Update Caches",
+    description: "Halts Windows Update services, purges SoftwareDistribution downloads and temp file nodes, then resumes services.",
+    category: "windows",
+    script: `@echo off
+echo Stopping Windows Update service...
+net stop wuauserv
+echo Purging SoftwareDistribution cache...
+del /f /s /q %windir%\\SoftwareDistribution\\Download\\*.*
+echo Purging Local User Temp files...
+del /f /s /q %temp%\\*.*
+echo Starting Windows Update service...
+net start wuauserv
+echo System temp cache clean complete.
+pause`,
+    type: "cmd"
+  },
+  {
+    id: "24",
+    title: "List Active Listening TCP/UDP Socket Ports",
+    description: "Performs netstat queries to list active network connections currently in LISTENING state with matching PIDs.",
+    category: "windows",
+    script: `@echo off
+echo Listing active network socket listening ports...
+netstat -ano | findstr LISTENING
+pause`,
+    type: "cmd"
   }
 ];
 
@@ -372,10 +434,15 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Load PowerShell scripts
+  // Load PowerShell & CMD scripts
   const [scripts, setScripts] = useState(() => {
     const saved = localStorage.getItem('engineeros_scripts');
-    return saved ? JSON.parse(saved) : STARTER_SCRIPTS;
+    if (!saved) return STARTER_SCRIPTS;
+    const parsed = JSON.parse(saved);
+    if (!parsed.some(s => s.type === 'cmd')) {
+      return STARTER_SCRIPTS;
+    }
+    return parsed;
   });
 
   // Load Roadmap courses progress
@@ -494,7 +561,6 @@ export default function App() {
     { id: 'tickets', label: 'Ticket Simulator', icon: Inbox },
     { id: 'quizzes', label: 'Exam Practice', icon: ClipboardList },
     { id: 'labs', label: 'Home Lab Guides', icon: Server },
-    { id: 'resume', label: 'Resume Matcher', icon: Sparkles },
     { id: 'knowledge', label: 'Knowledge Base', icon: BookOpen },
     { id: 'powershell', label: 'PowerShell Library', icon: Terminal },
     { id: 'interview', label: 'Interview Prep', icon: Award },
@@ -642,9 +708,6 @@ export default function App() {
           )}
           {activeTab === 'labs' && (
             <LabGuides />
-          )}
-          {activeTab === 'resume' && (
-            <ResumeAnalyzer settings={settings} />
           )}
           {activeTab === 'knowledge' && (
             <KnowledgeBase 

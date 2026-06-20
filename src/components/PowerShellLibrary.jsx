@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Terminal, Copy, Check, Trash2, Edit2, X } from 'lucide-react';
+import { Search, Plus, Terminal, Copy, Check, Trash2, Edit2, X, Cpu } from 'lucide-react';
 
 const CATEGORIES = ["all", "active_directory", "dns", "dhcp", "group_policy", "m365", "exchange_online", "azure", "intune", "windows", "general"];
 
@@ -15,6 +15,7 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
   const [newDescription, setNewDescription] = useState('');
   const [newCode, setNewCode] = useState('');
   const [newCategory, setNewCategory] = useState('general');
+  const [newType, setNewType] = useState('powershell'); // 'powershell' | 'cmd'
 
   const filteredScripts = scripts.filter(scr => {
     const matchesSearch =
@@ -44,7 +45,8 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
       title: newTitle,
       description: newDescription,
       script: newCode,
-      category: newCategory
+      category: newCategory,
+      type: newType
     };
 
     onSaveScript(item);
@@ -56,6 +58,7 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
     setNewDescription('');
     setNewCode('');
     setNewCategory('general');
+    setNewType('powershell');
     setShowAddForm(false);
   };
 
@@ -72,9 +75,9 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-6 mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-textPrimary flex items-center gap-2">
-            💻 PowerShell Command Library
+            💻 Terminal Script & Command Library
           </h1>
-          <p className="text-textMuted mt-1">Ready-to-use production scripts for automated systems and cloud admin operations.</p>
+          <p className="text-textMuted mt-1">Ready-to-use production PowerShell (.ps1) and CMD (.bat) scripts for admin operations.</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -117,60 +120,78 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
       {/* Add Script Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-cardBg border border-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+          <div className="bg-cardBg border border-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl animate-scaleUp">
             <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-3">
-              <h3 className="text-lg font-bold text-textPrimary">Create PowerShell Script</h3>
+              <h3 className="text-lg font-bold text-textPrimary">Create Shell Script</h3>
               <button onClick={resetAddForm} className="text-textMuted hover:text-textPrimary">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleAddSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Title</label>
-                <input
-                  type="text"
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. Export all Office 365 Users"
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    placeholder="e.g. Flush DNS Resolver Cache"
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Script Type</label>
+                  <select
+                    value={newType}
+                    onChange={(e) => setNewType(e.target.value)}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  >
+                    <option value="powershell">PowerShell (.ps1)</option>
+                    <option value="cmd">Command Prompt (.bat / .cmd)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Category</label>
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent capitalize"
+                  >
+                    {CATEGORIES.filter(c => c !== 'all').map(c => (
+                      <option key={c} value={c}>{c.replace('_', ' ')}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Description / Info</label>
+                  <input
+                    type="text"
+                    required
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    placeholder="e.g. Purges local cache and forces workstation IP release."
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Category</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent capitalize"
-                >
-                  {CATEGORIES.filter(c => c !== 'all').map(c => (
-                    <option key={c} value={c}>{c.replace('_', ' ')}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Description / Modules required</label>
-                <input
-                  type="text"
-                  required
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="e.g. Requires Microsoft.Graph module. Exports licensed state of users."
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">PowerShell Script Code</label>
+                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Script Code</label>
                 <textarea
                   required
                   rows="8"
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
-                  placeholder="Import-Module ActiveDirectory..."
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-green-400 focus:outline-none focus:border-primaryAccent font-mono resize-y"
+                  placeholder={newType === 'cmd' ? '@echo off\nipconfig /flushdns\npause' : 'Clear-DnsClientCache'}
+                  className={`w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primaryAccent font-mono resize-y ${
+                    newType === 'cmd' ? 'text-cyan-400' : 'text-green-400'
+                  }`}
                 />
               </div>
 
@@ -197,57 +218,75 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
       {/* Edit Script Modal */}
       {editingScript && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-cardBg border border-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+          <div className="bg-cardBg border border-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl animate-scaleUp">
             <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-3">
-              <h3 className="text-lg font-bold text-textPrimary">Edit PowerShell Script</h3>
+              <h3 className="text-lg font-bold text-textPrimary">Edit Shell Script</h3>
               <button onClick={() => setEditingScript(null)} className="text-textMuted hover:text-textPrimary">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleEditSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Title</label>
-                <input
-                  type="text"
-                  required
-                  value={editingScript.title}
-                  onChange={(e) => setEditingScript({ ...editingScript, title: e.target.value })}
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingScript.title}
+                    onChange={(e) => setEditingScript({ ...editingScript, title: e.target.value })}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Script Type</label>
+                  <select
+                    value={editingScript.type || 'powershell'}
+                    onChange={(e) => setEditingScript({ ...editingScript, type: e.target.value })}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  >
+                    <option value="powershell">PowerShell (.ps1)</option>
+                    <option value="cmd">Command Prompt (.bat / .cmd)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Category</label>
+                  <select
+                    value={editingScript.category}
+                    onChange={(e) => setEditingScript({ ...editingScript, category: e.target.value })}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent capitalize"
+                  >
+                    {CATEGORIES.filter(c => c !== 'all').map(c => (
+                      <option key={c} value={c}>{c.replace('_', ' ')}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Description</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingScript.description}
+                    onChange={(e) => setEditingScript({ ...editingScript, description: e.target.value })}
+                    className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Category</label>
-                <select
-                  value={editingScript.category}
-                  onChange={(e) => setEditingScript({ ...editingScript, category: e.target.value })}
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent capitalize"
-                >
-                  {CATEGORIES.filter(c => c !== 'all').map(c => (
-                    <option key={c} value={c}>{c.replace('_', ' ')}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Description</label>
-                <input
-                  type="text"
-                  required
-                  value={editingScript.description}
-                  onChange={(e) => setEditingScript({ ...editingScript, description: e.target.value })}
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-textPrimary focus:outline-none focus:border-primaryAccent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">PowerShell Script Code</label>
+                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Script Code</label>
                 <textarea
                   required
                   rows="8"
                   value={editingScript.script}
                   onChange={(e) => setEditingScript({ ...editingScript, script: e.target.value })}
-                  className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm text-green-400 focus:outline-none focus:border-primaryAccent font-mono"
+                  className={`w-full bg-sidebarBg border border-gray-800 rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primaryAccent font-mono ${
+                    (editingScript.type || 'powershell') === 'cmd' ? 'text-cyan-400' : 'text-green-400'
+                  }`}
                 />
               </div>
 
@@ -273,69 +312,79 @@ export default function PowerShellLibrary({ scripts, onSaveScript, onDeleteScrip
 
       {/* Script Cards List */}
       {filteredScripts.length === 0 ? (
-        <div className="bg-cardBg border border-gray-800 rounded-xl p-12 text-center">
+        <div className="bg-cardBg border border-gray-800 rounded-xl p-12 text-center animate-fadeIn">
           <Terminal className="mx-auto text-textMuted mb-4" size={36} />
           <h3 className="text-lg font-bold text-textPrimary">No Scripts Found</h3>
           <p className="text-textMuted text-sm mt-1">Write your search keyword or change categories.</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredScripts.map(scr => (
-            <div key={scr.id} className="bg-cardBg border border-gray-800 rounded-xl overflow-hidden hover:border-gray-750 transition-all">
-              {/* Header */}
-              <div className="bg-sidebarBg px-5 py-3 border-b border-gray-850 flex items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-base font-bold text-textPrimary flex items-center gap-2">
-                    <Terminal size={16} className="text-primaryAccent shrink-0" />
-                    {scr.title}
-                  </h3>
-                  <p className="text-xs text-textMuted mt-0.5">{scr.description}</p>
+          {filteredScripts.map(scr => {
+            const isCmd = scr.type === 'cmd';
+            return (
+              <div key={scr.id} className="bg-cardBg border border-gray-800 rounded-xl overflow-hidden hover:border-gray-750 transition-all animate-fadeIn">
+                {/* Header */}
+                <div className="bg-sidebarBg px-5 py-3 border-b border-gray-850 flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-textPrimary flex items-center gap-2">
+                      <Terminal size={16} className={isCmd ? "text-amber-500 shrink-0" : "text-primaryAccent shrink-0"} />
+                      {scr.title}
+                    </h3>
+                    <p className="text-xs text-textMuted mt-0.5">{scr.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-[10px] border rounded-full px-2.5 py-0.5 uppercase font-bold font-mono ${
+                      isCmd 
+                        ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' 
+                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    }`}>
+                      {isCmd ? 'CMD' : 'PS'}
+                    </span>
+                    <span className="text-[10px] bg-sidebarBg border border-gray-850 text-textMuted rounded-full px-2.5 py-0.5 capitalize font-semibold font-mono">
+                      {scr.category.replace('_', ' ')}
+                    </span>
+                    <button
+                      onClick={() => setEditingScript(scr)}
+                      className="text-textMuted hover:text-primaryAccent p-1.5 rounded hover:bg-gray-800 transition-colors"
+                      title="Edit Script"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteScript(scr.id)}
+                      className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-gray-800 transition-colors"
+                      title="Delete Script"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] bg-primaryAccent/10 text-primaryAccent border border-primaryAccent/20 rounded-full px-2.5 py-0.5 capitalize font-semibold font-mono">
-                    {scr.category.replace('_', ' ')}
-                  </span>
-                  <button
-                    onClick={() => setEditingScript(scr)}
-                    className="text-textMuted hover:text-primaryAccent p-1.5 rounded hover:bg-gray-800 transition-colors"
-                    title="Edit Script"
-                  >
-                    <Edit2 size={13} />
-                  </button>
-                  <button
-                    onClick={() => onDeleteScript(scr.id)}
-                    className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-gray-800 transition-colors"
-                    title="Delete Script"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </div>
 
-              {/* Code block with copy action */}
-              <div className="relative group">
-                <button
-                  onClick={() => handleCopy(scr.id, scr.script)}
-                  className="absolute right-4 top-4 bg-sidebarBg/90 hover:bg-sidebarBg text-textMuted hover:text-white p-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 flex items-center gap-1.5 text-xs font-semibold"
-                >
-                  {copyStates[scr.id] ? (
-                    <>
-                      <Check size={14} className="text-successGreen" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={14} />
-                      Copy Code
-                    </>
-                  )}
-                </button>
-                <pre className="p-5 bg-black/40 overflow-x-auto text-green-400 text-xs font-mono leading-relaxed max-h-[300px]">
-                  <code>{scr.script}</code>
-                </pre>
+                {/* Code block with copy action */}
+                <div className="relative group">
+                  <button
+                    onClick={() => handleCopy(scr.id, scr.script)}
+                    className="absolute right-4 top-4 bg-sidebarBg/90 hover:bg-sidebarBg text-textMuted hover:text-white p-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 flex items-center gap-1.5 text-xs font-semibold"
+                  >
+                    {copyStates[scr.id] ? (
+                      <>
+                        <Check size={14} className="text-successGreen" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} />
+                        Copy Code
+                      </>
+                    )}
+                  </button>
+                  <pre className="p-5 bg-black/40 overflow-x-auto text-xs font-mono leading-relaxed max-h-[300px]">
+                    <code className={isCmd ? 'text-cyan-400' : 'text-green-400'}>{scr.script}</code>
+                  </pre>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
