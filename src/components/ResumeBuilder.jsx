@@ -172,6 +172,128 @@ export default function ResumeBuilder({ settings }) {
     document.body.removeChild(element);
   };
 
+  const downloadAsWord = () => {
+    if (!resumeData) return;
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <title>${targetRole} Resume</title>
+        <style>
+          body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.5; margin: 1in; color: #333333; }
+          h1 { font-size: 18pt; border-bottom: 2px solid #4f46e5; padding-bottom: 4px; margin-top: 0; text-transform: uppercase; color: #111111; }
+          h2 { font-size: 12pt; border-bottom: 1px solid #dddddd; padding-bottom: 3px; margin-top: 20px; text-transform: uppercase; color: #4f46e5; }
+          h3 { font-size: 11pt; margin-top: 12px; margin-bottom: 4px; color: #111111; font-weight: bold; }
+          p { margin: 0 0 8px 0; text-align: justify; }
+          ul { margin: 0 0 12px 0; padding-left: 20px; }
+          li { margin-bottom: 4px; text-align: justify; }
+          .meta-info { font-size: 9.5pt; color: #666666; margin-bottom: 12px; }
+        </style>
+      </head>
+      <body>
+        <h1>${targetRole} Resume Draft</h1>
+        <div class="meta-info">Current Title: ${currentTitle} | Years of Experience: ${yearsExp}</div>
+        
+        <h2>Professional Summary</h2>
+        <p>${resumeData.summary}</p>
+        
+        <h2>Technical Skills Keywords</h2>
+        <p><strong>Keywords:</strong> ${resumeData.keywords}</p>
+        
+        <h2>Professional Experience</h2>
+        <h3>${currentTitle} (${yearsExp} Years)</h3>
+        <ul>
+          ${resumeData.experience.map(bullet => `<li>${bullet}</li>`).join('')}
+        </ul>
+        
+        <h2>Certifications & Credentials</h2>
+        ${Object.entries(resumeData.certs).map(([certName, bullets]) => `
+          <h3>${certName}</h3>
+          <ul>
+            ${bullets.map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        `).join('')}
+      </body>
+      </html>
+    `;
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const element = document.createElement("a");
+    element.href = URL.createObjectURL(blob);
+    element.download = `${targetRole.replace(/\s+/g, '_')}_Resume.doc`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const downloadAsPDF = () => {
+    if (!resumeData) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert("Popup blocker active! Please allow popups to download PDF.");
+      return;
+    }
+    const htmlContent = `
+      <html>
+      <head>
+        <title>${targetRole.replace(/\s+/g, '_')}_Resume</title>
+        <style>
+          @page { size: letter; margin: 0.8in; }
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; line-height: 1.5; margin: 0; padding: 0; }
+          .header { border-bottom: 2px solid #4f46e5; padding-bottom: 8px; margin-bottom: 20px; }
+          h1 { font-size: 20pt; font-weight: bold; color: #111; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+          .subtitle { font-size: 11pt; color: #4f46e5; font-weight: 600; margin: 0; text-transform: uppercase; }
+          h2 { font-size: 12pt; font-weight: bold; color: #111; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin: 24px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+          .experience-header { display: flex; justify-content: space-between; font-weight: bold; color: #222; margin-bottom: 6px; font-size: 11pt; }
+          .experience-date { font-weight: normal; color: #666; font-size: 9.5pt; }
+          p { margin: 0 0 10px 0; text-align: justify; }
+          ul { margin: 0 0 15px 0; padding-left: 20px; }
+          li { margin-bottom: 6px; text-align: justify; }
+          .skills-list { font-weight: 500; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Systems Engineer Resume</h1>
+          <div class="subtitle">Target Role: ${targetRole}</div>
+        </div>
+        
+        <h2>Professional Summary</h2>
+        <p>${resumeData.summary}</p>
+        
+        <h2>Technical Skills Keywords</h2>
+        <p class="skills-list">${resumeData.keywords}</p>
+        
+        <h2>Professional Experience</h2>
+        <div class="experience-header">
+          <span>${currentTitle}</span>
+          <span class="experience-date">${yearsExp} Years Experience</span>
+        </div>
+        <ul>
+          ${resumeData.experience.map(bullet => `<li>${bullet}</li>`).join('')}
+        </ul>
+        
+        <h2>Certifications & Credentials</h2>
+        ${Object.entries(resumeData.certs).map(([certName, bullets]) => `
+          <div class="experience-header" style="margin-top: 12px;">
+            <span>${certName}</span>
+          </div>
+          <ul>
+            ${bullets.map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        `).join('')}
+        
+        <script>
+          window.onload = function() {
+            window.print();
+            setTimeout(function() { window.close(); }, 500);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
@@ -366,13 +488,29 @@ export default function ResumeBuilder({ settings }) {
                 <span className="text-xs font-bold text-successGreen flex items-center gap-1.5">
                   <Sparkles size={14} /> Output Ready
                 </span>
-                <button
-                  onClick={downloadAsTextFile}
-                  className="flex items-center gap-1 text-[10px] bg-primaryAccent hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded transition-colors"
-                >
-                  <Download size={12} />
-                  Download as .txt
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={downloadAsTextFile}
+                    className="flex items-center gap-1 text-[10px] bg-sidebarBg hover:bg-gray-800 border border-gray-800 text-textPrimary font-bold px-2.5 py-1.5 rounded transition-colors"
+                  >
+                    <Download size={11} />
+                    TXT
+                  </button>
+                  <button
+                    onClick={downloadAsWord}
+                    className="flex items-center gap-1 text-[10px] bg-sidebarBg hover:bg-gray-800 border border-gray-800 text-textPrimary font-bold px-2.5 py-1.5 rounded transition-colors"
+                  >
+                    <Download size={11} />
+                    Word
+                  </button>
+                  <button
+                    onClick={downloadAsPDF}
+                    className="flex items-center gap-1 text-[10px] bg-primaryAccent hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded transition-colors animate-pulse"
+                  >
+                    <Download size={11} />
+                    PDF / Print
+                  </button>
+                </div>
               </div>
 
               {/* Resume Card Preview */}
