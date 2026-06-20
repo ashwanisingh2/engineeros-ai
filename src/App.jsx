@@ -727,7 +727,7 @@ export default function App() {
             <InterviewPrep settings={settings} />
           )}
           {activeTab === 'roadmap' && (
-            <CourseRoadmap courses={courses} onUpdateCourse={handleUpdateCourse} />
+            <CourseRoadmap courses={courses} settings={settings} onUpdateCourse={handleUpdateCourse} />
           )}
           {activeTab === 'docs' && (
             <DocGenerator settings={settings} onSaveToKnowledge={handleSaveKnowledgeItem} />
