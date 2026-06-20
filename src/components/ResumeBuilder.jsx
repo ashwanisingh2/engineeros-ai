@@ -25,6 +25,7 @@ export default function ResumeBuilder({ settings }) {
   
   const [loading, setLoading] = useState(false);
   const [resumeData, setResumeData] = useState(null); // { summary, experience: [], certs: {}, keywords: '' }
+  const [oldResume, setOldResume] = useState('');
   const [copiedSection, setCopiedSection] = useState(null);
 
   // Pre-fill from settings on mount or load
@@ -76,10 +77,11 @@ export default function ResumeBuilder({ settings }) {
       - Target Role: "${targetRole}"
       - Completed Certifications: ${JSON.stringify(selectedCerts)}
       - Top Skills: ${JSON.stringify(skills)}
+      - Reference Old Resume (Optional): "${oldResume || 'None provided'}"
 
       Instructions:
       1. Write a one-paragraph technical summary focusing on L1/L2 sysadmin skill transitions.
-      2. Write exactly 5 action-verb driven, metric-heavy, ATS-friendly bullet points detailing their current experience.
+      2. Write exactly 5 action-verb driven, metric-heavy, ATS-friendly bullet points detailing their experience. If an old resume is provided, prioritize re-writing their real-world experience, projects, and duties from that reference into high-quality ATS points.
       3. For each selected certification, write exactly 3 bullet points detailing what skills/labs were tested or achieved.
       
       Respond ONLY with a valid JSON object. Do not include markdown code block formatting or introductory text. Return strictly the raw JSON object matching this format:
@@ -300,6 +302,19 @@ export default function ResumeBuilder({ settings }) {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Reference Old Resume Textarea */}
+            <div>
+              <label className="block text-xs font-semibold text-textMuted uppercase tracking-wider mb-2">
+                Old Resume / Reference Context (Optional)
+              </label>
+              <textarea
+                value={oldResume}
+                onChange={(e) => setOldResume(e.target.value)}
+                placeholder="Paste your existing resume here to use it as an experience and project reference..."
+                className="w-full bg-sidebarBg border border-gray-800 rounded-lg py-2.5 px-4 text-xs text-textPrimary focus:outline-none focus:border-primaryAccent h-24 font-sans leading-relaxed resize-y"
+              />
             </div>
 
             <button
